@@ -19,14 +19,19 @@ class Map:
         self.mini_map = mini_map
         self.world_map = {}
         self.get_map()
+        self.tile_image = pg.image.load('download (6).jpg').convert_alpha()
 
     def get_map(self):
         for j, row in enumerate(self.mini_map):
             for i, value in enumerate(row):
                 if value:
                     self.world_map[(i,j)] = value
+                  
+  
 
     def draw(self):
-        [pg.draw.rect(self.game.screen, 'white', (pos[0] * 100, pos[1] * 100, 100, 100), 2)
-         for pos in self.world_map]
+      for pos in self.world_map:
+        x = pos[0]*100
+        y = pos[1]*100
+        self.game.screen.blit(self.tile_image, (x, y))
   

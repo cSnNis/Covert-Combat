@@ -1,71 +1,81 @@
 from settings import *
 import pygame as pg
 import math
-class player:
-  def __init__(self,game):
-    self.game = game
-    self.x, self.y = player_pos
-    self.angle = player_angle
-    self.x_change = x_change
-    self.y_change = y_change
-    self.accelerating = False
-  def movement(self):
-    sin_a = math.sin(self.angle)
-    cos_a = math.cos(self.angle)
-    dx, dy = 0, 0
-    speed = player_accel * self.game.delta_time
-    speed_sin = speed * sin_a
-    speed_cos = speed * cos_a
-    keys = pg.key.get_pressed()
-    if keys[pg.K_w]:
-      self.x_change += speed_cos
-      self.y_change += speed_sin
-      dx += self.x_change
-      dy += self.y_change
-      self.accelerating = True
-    if keys[pg.K_s]:
-      self.x_change -= speed_cos
-      self.y_change -= speed_sin
-      dx += self.x_change
-      dy += self.y_change
-      self.accelerating = True
-    else:
-      self.accelerating = False
-      self.x_change *= 0.5
-      self.y_change *= 0.5
-      max_speed = 1
-      magnitude = math.sqrt(self.x_change**2 + self.y_change**2)
-      if magnitude > max_speed:
-          scaling_factor = max_speed / magnitude
-          self.x_change *= scaling_factor
-          self.y_change *= scaling_factor
-    self.check_wall_collision(dx, dy)
+from map import *
 
-    if keys[pg.K_LEFT]:
-      self.angle -= player_rot_speed * self.game.delta_time
-    if keys[pg.K_RIGHT]:
-      self.angle += player_rot_speed * self.game.delta_time
-    self.angle %= math.tau
-  def check_wall(self,x,y):
-    return(x,y) not in self.game.map.world_map
-  def check_wall_collision(self,dx,dy):
-    if self.check_wall(int(self.x+dx),int(self.y)):
-      self.x += dx
-    if self.check_wall(int(self.x),int(self.y+dy)):
-      self.y += dy
+class Player:
+    def __init__(self, game):
+      self.game = game
+      self.x, self.y = player_pos
+      self.angle = player_angle
+      self.image = pg.image.load('download (9) (2).png').convert_alpha()
+      self.tank_rect = self.image.get_rect(center=(self.x * 150, self.y * 100))
+      self.dx, self.dy = 0, 0
 
-  def draw(self):
-    pg.draw.line(self.game.screen, 'red', (self.x *100, self.y * 100), 
-                 (self.x * 100 + WIDTH * math.cos(self.angle),
-                 self.y * 100 + WIDTH * math.sin(self.angle)), 2)
-    pg.draw.rect(self.game.screen,'red', pg.Rect(self.x*100 , self.y*100 , 10, 10))
+    def movement(self):
+      sin_a = math.sin(self.angle)
+      cos_a = math.cos(self.angle)
+      speed = player_speed * self.game.delta_time
+      keys = pg.key.get_pressed()
+
+
+      if keys[pg.K_LEFT]:
+        self.angle += player_rot_speed * self.game.delta_time
+      if keys[pg.K_RIGHT]:
+        self.angle -= player_rot_speed * self.game.delta_time
+
+      if keys[pg.K_w]:
+        # Accelerate forward
+        self.dx += speed * cos_a
+        self.dy -= speed * sin_a
+        self.accelerating = True
+        magnitude = math.sqrt(self.dx**2 + self.dy**2)
+        if magnitude > player_max_speed:
+            scaling_factor = player_max_speed / magnitude
+            self.dx *= scaling_factor
+            self.dy *= scaling_factor
+      elif keys[pg.K_s]:
+      # Decelerate (apply braking)
+        self.dx -= speed * cos_a
+        self.dy += speed * sin_a
+        self.accelerating = True
+        magnitude = math.sqrt(self.dx**2 + self.dy**2)
+        if magnitude > player_max_speed:
+            scaling_factor = (player_max_speed/2) / magnitude
+            self.dx *= scaling_factor
+            self.dy *= scaling_factor
+      else:
+        # Apply deceleration
+        deceleration = player_deceleration * self.game.delta_time
+        self.dx -= min(deceleration, abs(self.dx)) * (self.dx / abs(self.dx) if self.dx != 0 else 1)
+        self.dy -= min(deceleration, abs(self.dy)) * (self.dy/ abs(self.dy) if self.dy != 0 else 1)
+        self.accelerating = False
+
+      self.x += self.dx
+      self.y += self.dy
+    
+    def check_wall(self,x,y):
+      return(x,y) not in self.game.world_map
+
+    def check_wall_collision(self,dx,dy):
+      if self.check_wall(int(self.x+dx),int(self.y)):
+        pg.quit()
+      if self.check_wall(int(self.x),int(self.y+dy)):
+        pg.quit()
   
+    def update(self):
+        self.movement()
+        # Add code for bullet logic here
 
-  def update(self):
-    self.movement()
-  @property
-  def pos(self):
-    return self.x, self.y
-  @property
-  def map_pos(self):
-    return int(self.x), int(self.y)
+    def draw(self):
+      self.tank_rect.center = (self.x * 150, self.y * 100)
+      rotated_image = pg.transform.rotozoom(self.image, math.degrees(self.angle), 1)
+      self.game.screen.blit(rotated_image, self.tank_rect.topleft)
+
+    @property
+    def pos(self):
+        return self.x, self.y
+
+    @property
+    def map_pos(self):
+        return int(self.x), int(self.y)

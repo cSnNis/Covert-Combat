@@ -15,7 +15,7 @@ class Game:
     
   def new_game(self):
     self.map = Map(self)
-    self.player = player(self)
+    self.player = Player(self)
 
   def update(self):
     self.player.update()
@@ -33,12 +33,15 @@ class Game:
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
+
     
   def run(self):
     while True:
       self.check_events()
       self.update()
       self.draw()
+  
+      
   
 if __name__ == '__main__':
   game = Game()
