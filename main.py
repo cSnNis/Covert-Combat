@@ -6,6 +6,7 @@ from map import *
 from player import *
 
 class Game:
+  #initiating and defining everthing made so far
   def __init__(self):
     pg.init()
     self.screen = pg.display.set_mode(res)
