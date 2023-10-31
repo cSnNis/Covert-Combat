@@ -12,7 +12,7 @@ player_max_speed=0.01
 
 player_accel = 0.001
 
-player_deceleration = 0.0001
+player_deceleration = 0.00001
 
 x_change = 0
 
