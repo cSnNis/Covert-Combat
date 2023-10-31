@@ -6,7 +6,7 @@ player_pos = 1.5,5
 
 player_angle = 0
 
-player_speed = 0.001
+player_speed = 0.01
 
 player_max_speed=0.01
 
