@@ -16,6 +16,7 @@ class Game:
     
   def new_game(self):
     self.map = Map(self)
+    self.shell_group = pg.sprite.Group()
     self.player = Player(self)
 
   def update(self):
@@ -28,7 +29,7 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
-    self.bullet_group.draw(self.screen)
+    self.shell_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():

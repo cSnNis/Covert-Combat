@@ -10,12 +10,12 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.x, self.y = player_pos  # Initial player position
         self.angle = player_angle  # Initial player angle
-        self.image = pg.image.load('0001_small (1).png').convert_alpha()  # Load player image
+        self.image = pg.image.load('TankBody.png').convert_alpha()  # Load player image
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
         self.rect.center = (self.x * 200, self.y * 50)  # Set the initial position
         self.dx, self.dy = 0, 0  # Initialize speed components
         self.turret_angle = 0  # Initial turret angle
-        self.turret_image = pg.image.load('0010_small (1).png').convert_alpha()  # Load turret image
+        self.turret_image = pg.image.load('Turret.png').convert_alpha()  # Load turret image
         self.mask = pg.mask.from_surface(self.image)
 
     # Method to handle player movement
@@ -122,9 +122,9 @@ class Shell(pg.sprite.Sprite):
         self.image.fill(225,255,0) #Yellow
         self.rect = self.image.get_rect(center = (px, py)) #make a bullet that's center lies where the player is
     def update(self):
-        self.rect.move_ip(0, -5)
+        self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
     def detect_wall(self, collision):
         for shell in collision.keys():
-            shell_group.remove(shell)
+            Game.shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
 
 shell_group = pg.sprite.Group()
