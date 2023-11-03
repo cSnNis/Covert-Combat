@@ -28,6 +28,7 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
+    self.bullet_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():
