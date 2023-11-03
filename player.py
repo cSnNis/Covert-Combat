@@ -1,76 +1,107 @@
 from settings import *
 import pygame as pg
 import math
-from map import *
 
-class Player:
+# Define the Player class for the player character
+class Player(pg.sprite.Sprite):
     def __init__(self, game):
-      self.game = game
-      self.x, self.y = player_pos
-      self.angle = player_angle
-      self.image = pg.image.load('download (9) (2).png').convert_alpha()
-      self.tank_rect = self.image.get_rect(center=(self.x * 150, self.y * 50))
-      self.dx, self.dy = 0, 0
+        # Initialize the player's attributes
+        pg.sprite.Sprite.__init__(self)
+        self.game = game
+        self.x, self.y = player_pos  # Initial player position
+        self.angle = player_angle  # Initial player angle
+        self.image = pg.image.load('0001_small (1).png').convert_alpha()  # Load player image
+        self.rect = self.image.get_rect()  # Create a rect for the player sprite
+        self.rect.center = (self.x * 200, self.y * 50)  # Set the initial position
+        self.dx, self.dy = 0, 0  # Initialize speed components
+        self.turret_angle = 0  # Initial turret angle
+        self.turret_image = pg.image.load('0010_small (1).png').convert_alpha()  # Load turret image
+        self.mask = pg.mask.from_surface(self.image)
 
+    # Method to handle player movement
     def movement(self):
-      sin_a = math.sin(self.angle)
-      cos_a = math.cos(self.angle)
-      keys = pg.key.get_pressed()
-      if keys[pg.K_LEFT]:
-        self.angle -= player_rot_speed * self.game.delta_time
-      if keys[pg.K_RIGHT]:
-        self.angle += player_rot_speed * self.game.delta_time
+        sin_a = math.sin(self.angle)
+        cos_a = math.cos(self.angle)
+        keys = pg.key.get_pressed()
 
-        # Calculate the adjusted speed based on direction
-      speed_x = player_speed * cos_a
-      speed_y = player_speed * sin_a
-      if keys[pg.K_w]:
-            # Accelerate forward
-        self.dx += speed_x
-        self.dy += speed_y
-        self.accelerating = True
-        magnitude = math.sqrt(self.dx**2 + self.dy**2)
-        if magnitude > player_max_speed:
-          scaling_factor = player_max_speed / magnitude
-          self.dx *= scaling_factor
-          self.dy *= scaling_factor
-      elif keys[pg.K_s]:
-            # Decelerate (apply braking)
-        self.dx -= speed_x
-        self.dy -= speed_y
-        self.accelerating = True
-        magnitude = math.sqrt(self.dx**2 + self.dy**2)
-        if magnitude > player_max_speed:
-          scaling_factor = (player_max_speed / 2) / magnitude
-          self.dx *= scaling_factor
-          self.dy *= scaling_factor
-      else:
-            # Apply deceleration
-          deceleration = player_deceleration * self.game.delta_time
-          self.dx -= min(deceleration, abs(self.dx)) * (self.dx / abs(self.dx) if self.dx != 0 else 1)
-          self.dy -= min(deceleration, abs(self.dy)) * (self.dy / abs(self.dy) if self.dy != 0 else 1)
-          self.accelerating = False
-      self.x += self.dx
-      self.y += self.dy
-  
+        if keys[pg.K_a]:
+            self.angle -= player_rot_speed * self.game.delta_time  # Rotate left
+
+        if keys[pg.K_d]:
+            self.angle += player_rot_speed * self.game.delta_time  # Rotate right
+
+        if keys[pg.K_q]:
+            self.turret_angle -= player_rot_speed * self.game.delta_time  # Rotate turret left
+
+        if keys[pg.K_e]:
+            self.turret_angle += player_rot_speed * self.game.delta_time  # Rotate turret right
+
+        speed_x = player_speed * cos_a
+        speed_y = player_speed * sin_a
+
+        if keys[pg.K_w]:  # Move forward
+            self.dx += speed_x
+            self.dy += speed_y
+            self.accelerating = True
+            magnitude = math.sqrt(self.dx ** 2 + self.dy ** 2)
+
+            if magnitude > player_max_speed:
+                scaling_factor = player_max_speed / magnitude
+                self.dx *= scaling_factor
+                self.dy *= scaling_factor
+            collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
+            if collisions:
+                # Calculate dot products between movement vectors and wall normals
+              self.dx = -self.dx 
+              self.dy = -self.dy 
+
+        elif keys[pg.K_s]:  # Move backward
+            self.dx -= speed_x
+            self.dy -= speed_y
+            self.accelerating = True
+            magnitude = math.sqrt(self.dx ** 2 + self.dy ** 2)
+
+            if magnitude > player_max_speed:
+                scaling_factor = (player_max_speed / 2) / magnitude
+                self.dx *= scaling_factor
+                self.dy *= scaling_factor
+            collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
+            if collisions:
+                  # Calculate dot products between movement vectors and wall normals
+                self.dx = -self.dx 
+                self.dy = -self.dy
+            
+
+        else:  # Deceleration when no movement keys are pressed
+            deceleration = player_deceleration * self.game.delta_time
+            self.dx -= min(deceleration, abs(self.dx)) * (self.dx / abs(self.dx) if self.dx != 0 else 1)
+            self.dy -= min(deceleration, abs(self.dy)) * (self.dy / abs(self.dy) if self.dy != 0 else 1)
+            self.accelerating = False
+
+        self.x += self.dx  # Update player's x position
+        self.y += self.dy  # Update player's y position
+
+    # Method to update the player's state
     def update(self):
-        self.movement()
+        self.movement()  # Call movement method to handle movement
+        self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
+        self.draw()  # Call draw method to render the player and turret
 
+    # Method to draw the player and turret
     def draw(self):
-    #finding the center of the tank
-      self.tank_rect.center = (self.x * 150, self.y * 50)
-      #defining the rotated image
-      rotated_image = pg.transform.rotate(self.image, math.degrees(-self.angle))
-      #getting the rotated image
-      self.tank_rect = rotated_image.get_rect(center=self.tank_rect.center)
-      #drawing and placeing the new rotated image
-      self.game.screen.blit(rotated_image, self.tank_rect)
-class turret:
-  #creat turret movement and shooting here
+        rotated_image = pg.transform.rotate(self.image, math.degrees(-self.angle))
+        self.rect = rotated_image.get_rect(center=(self.x * 200, self.y * 50))
+        self.game.screen.blit(rotated_image, self.rect)
+        rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(-self.turret_angle))
+        turret_rect = rotated_turret.get_rect(center=(self.x * 200, self.y * 50))
+        self.game.screen.blit(rotated_turret, turret_rect)
+
+    # Property to get the player's position
     @property
     def pos(self):
         return self.x, self.y
 
+    # Property to get the player's position as integers
     @property
     def map_pos(self):
         return int(self.x), int(self.y)
