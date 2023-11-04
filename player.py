@@ -130,17 +130,17 @@ class Player(pg.sprite.Sprite):
             self.speed = player_max_speed
 
         #Check for collisions before applying movement.
-        # if self.check_wall(int(self.x + self.x_change),int(self.y)): #If not colliding with a wall on the x axis,
-        #     self.x += self.x_change #Then apply for that axis
-        # if self.check_wall(int(self.x),int(self.y+self.y_change)):
-        #     self.y += self.y_change
-
-        #Sprite-based collisions
-        collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
-        if not collisions:
-            # Calculate dot products between movement vectors and wall normals
+        if self.check_wall(int(self.x + self.x_change),int(self.y)): #If not colliding with a wall on the x axis,
             self.x += self.x_change #Then apply for that axis
+        if self.check_wall(int(self.x),int(self.y+self.y_change)):
             self.y += self.y_change
+
+        #Sprite-based collisions, under work right now so I've commented this out. -Cason Nichols
+        # collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
+        # if not collisions:
+        #     # Calculate dot products between movement vectors and wall normals
+        #     self.x += self.x_change #Then apply for that axis
+        #     self.y += self.y_change
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
