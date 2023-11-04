@@ -4,6 +4,7 @@ import random
 from settings import *
 from map import *
 from player import *
+import DebuggingDisplay
 
 class Game:
   #initiating and defining everthing made so far
@@ -18,10 +19,13 @@ class Game:
     self.map = Map(self)
     self.player = Player(self)
 
+    self.debug = DebuggingDisplay.DebugDisplay(self)
+
   def update(self):
     self.player.update()
+    self.debug.update()
     pg.display.flip()
-    self.delta_time = self.clock.tick(fps)
+    self.delta_time = self.clock.tick(fps) / 1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
     
   def draw(self):
@@ -29,12 +33,13 @@ class Game:
     self.map.draw()
     self.player.draw()
 
+    self.debug.draw()
+
   def check_events(self):
     for event in pg.event.get():
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
-
     
   def run(self):
     while True:
