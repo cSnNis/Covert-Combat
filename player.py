@@ -4,24 +4,25 @@ import math
 
 # Define the Player class for the player character
 class Player(pg.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, inputTuple):
         # Initialize the player's attributes
         pg.sprite.Sprite.__init__(self)
         self.game = game
         self.x, self.y = player_pos  # Initial player position
         self.angle = player_angle  # Initial player angle
 
-        self.image = pg.image.load(tank_sprite_path).convert_alpha()  # Load player image
+        self.image = pg.transform.scale_by(pg.image.load(tank_sprite_path).convert_alpha(), tank_scale)  # Load player image, resize to chosen tank dimensions.
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
         self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
-        self.dx, self.dy = 0, 0  # Initialize speed components
         self.speed = 0
         
         self.turret_angle = 0  # Initial turret angle
-        self.turret_image = pg.image.load(turret_sprite_path).convert_alpha()  # Load turret image
+        self.turret_image = pg.transform.scale_by(pg.image.load(turret_sprite_path).convert_alpha(), tank_scale)  # Load turret image
         
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
 
+        self.inputs = inputTuple
+        
         self.stopped = True
 
     # Method to handle player movement
@@ -89,17 +90,17 @@ class Player(pg.sprite.Sprite):
 
     def get_movement(self): #Get movement from the player.
         keys = pg.key.get_pressed() #dictionary of keys pressed this frame
-        if keys[pg.K_w]: #Forward 
+        if keys[self.inputs[0]]: #Forward 
             if self.speed < 0: #If the tank is moving backward and is now trying to move forward, it should also deccelerate.
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
             self.stopped = False
             self.speed += player_accel * self.game.delta_time
-        elif keys[pg.K_s]: #Backward acceleration
+        elif keys[self.inputs[1]]: #Backward acceleration
             if self.speed > 0: #If the tank is moving forward and is now trying to move backward, then the tank should also deccelerate
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
             self.stopped = False
             self.speed -= player_accel * self.game.delta_time
-        else: #No input, begin decelerating
+        else: #No inputs, begin decelerating
             if not self.stopped:
                 if abs(self.speed) > accelsens:
                     self.speed *= 1 - (player_deceleration * self.game.delta_time)
@@ -107,17 +108,17 @@ class Player(pg.sprite.Sprite):
                 self.stopped = True
                 self.speed = 0
 
-        if keys[pg.K_a]: #Turning
+        if keys[self.inputs[2]]: #Turning
             self.angle -= player_rot_speed * self.game.delta_time
             self.angle %= math.tau # To keep the player angle below 2pi. Clever.
-        if keys[pg.K_d]:
+        if keys[self.inputs[3]]:
             self.angle += player_rot_speed * self.game.delta_time
             self.angle %= math.tau 
 
-        if keys[pg.K_q]: #Turret turning
+        if keys[self.inputs[4]]: #Turret turning
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
-        if keys[pg.K_e]:
+        if keys[self.inputs[5]]:
             self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
 
