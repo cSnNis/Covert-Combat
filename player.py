@@ -24,69 +24,6 @@ class Player(pg.sprite.Sprite):
 
         self.stopped = True
 
-    # Method to handle player movement
-    def movement(self):
-        sin_a = math.sin(self.angle)
-        cos_a = math.cos(self.angle)
-        keys = pg.key.get_pressed()
-
-        if keys[pg.K_a]:
-            self.angle -= player_rot_speed * self.game.delta_time  # Rotate left
-
-        if keys[pg.K_d]:
-            self.angle += player_rot_speed * self.game.delta_time  # Rotate right
-
-        if keys[pg.K_q]:
-            self.turret_angle -= player_rot_speed * self.game.delta_time  # Rotate turret left
-
-        if keys[pg.K_e]:
-            self.turret_angle += player_rot_speed * self.game.delta_time  # Rotate turret right
-
-        speed_x = player_speed * cos_a
-        speed_y = player_speed * sin_a
-
-        if keys[pg.K_w]:  # Move forward
-            self.dx += speed_x
-            self.dy += speed_y
-            self.accelerating = True
-            magnitude = math.sqrt(self.dx ** 2 + self.dy ** 2)
-
-            if magnitude > player_max_speed:
-                scaling_factor = player_max_speed / magnitude
-                self.dx *= scaling_factor
-                self.dy *= scaling_factor
-            collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
-            if collisions:
-                # Calculate dot products between movement vectors and wall normals
-              self.dx = -self.dx 
-              self.dy = -self.dy 
-
-        elif keys[pg.K_s]:  # Move backward
-            self.dx -= speed_x
-            self.dy -= speed_y
-            self.accelerating = True
-            magnitude = math.sqrt(self.dx ** 2 + self.dy ** 2)
-
-            if magnitude > player_max_speed:
-                scaling_factor = (player_max_speed / 2) / magnitude
-                self.dx *= scaling_factor
-                self.dy *= scaling_factor
-            collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
-            if collisions:
-                  # Calculate dot products between movement vectors and wall normals
-                self.dx = -self.dx 
-                self.dy = -self.dy
-            
-
-        else:  # Deceleration when no movement keys are pressed
-            deceleration = player_deceleration * self.game.delta_time
-            self.dx -= min(deceleration, abs(self.dx)) * (self.dx / abs(self.dx) if self.dx != 0 else 1)
-            self.dy -= min(deceleration, abs(self.dy)) * (self.dy / abs(self.dy) if self.dy != 0 else 1)
-            self.accelerating = False
-
-        self.x += self.dx  # Update player's x position
-        self.y += self.dy  # Update player's y position
-
     def get_movement(self): #Get movement from the player.
         keys = pg.key.get_pressed() #dictionary of keys pressed this frame
         if keys[pg.K_w]: #Forward 
@@ -129,18 +66,16 @@ class Player(pg.sprite.Sprite):
         if self.speed > player_max_speed: 
             self.speed = player_max_speed
 
-        #Check for collisions before applying movement.
+        # #Check for collisions before applying movement.
         if self.check_wall(int(self.x + self.x_change),int(self.y)): #If not colliding with a wall on the x axis,
             self.x += self.x_change #Then apply for that axis
         if self.check_wall(int(self.x),int(self.y+self.y_change)):
             self.y += self.y_change
 
-        #Sprite-based collisions, under work right now so I've commented this out. -Cason Nichols
-        # collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
-        # if not collisions:
-        #     # Calculate dot products between movement vectors and wall normals
-        #     self.x += self.x_change #Then apply for that axis
-        #     self.y += self.y_change
+        #Sprite-based collisions.
+        collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
+        if len(collisions) > 0: #If there exists a collision, 
+            
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map

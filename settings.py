@@ -5,7 +5,7 @@ res = WIDTH,HEIGHT = 800,400
 fps = 60 
 
 #Tank Settings
-player_pos = 1.5,5
+player_pos = 2,5
 
 player_angle = 0 #in radians
 
