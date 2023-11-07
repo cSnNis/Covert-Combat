@@ -11,6 +11,7 @@ class Player(pg.sprite.Sprite):
         self.x, self.y = player_pos  # Initial player position
         self.angle = player_angle  # Initial player angle
 
+        self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
         self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
         self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
@@ -20,6 +21,8 @@ class Player(pg.sprite.Sprite):
         self.turret_angle = 0  # Initial turret angle
         self.turret_image = pg.image.load(turret_sprite_path).convert_alpha(); self.turret_image = pg.transform.scale(self.turret_image, (self.turret_image.get_width() * RESMULTX * tankSpriteScalingFactor, self.turret_image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load turret image
         
+        #Collision Variables
+        self.collidables = [self.game.map.walls] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
 
         self.stopped = True
@@ -72,10 +75,18 @@ class Player(pg.sprite.Sprite):
         if self.check_wall(int(self.x),int(self.y+self.y_change)):
             self.y += self.y_change
 
-        #Sprite-based collisions.
-        collisions = pg.sprite.spritecollide(self, self.game.map.walls, False)
-        if len(collisions) > 0: #If there exists a collision, 
-            
+        #Pixel-based collisions for the obstacles
+        for group in self.collidables: 
+            collisions = pg.sprite.spritecollide(self, group, False)
+            if len(collisions) > 0: #If there exists a collision, 
+                for collision in collisions:
+                    x, y = pg.sprite.collide_mask(self.mask, collision.mask) #The x and y coordinate of the collision
+
+                    #See notes on how this system works. 
+                    #Getting the angle of the collision point to the center of the tank.
+                    point_angle = math.atan((self.x - x) / (self.y - x))
+
+                    pg.draw.line(self.game.screen, 'red',(self.xDisplay, self.yDisplay) )
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
@@ -91,24 +102,25 @@ class Player(pg.sprite.Sprite):
     def update(self):
         #self.movement()  # Call movement method to handle movement
         self.get_movement()
-        self.apply_movement()
+        if not self.stopped:
+            self.apply_movement()
         self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
         #self.draw()  # Call draw method to render the player and turret
 
     # Method to draw the player and turret
     def draw(self):
-        xDisplay = self.x * COORDINATEMULTX
-        yDisplay = self.y * COORDINATEMULTY
+        self.xDisplay = self.x * COORDINATEMULTX
+        self.yDisplay = self.y * COORDINATEMULTY
         
         #Tank body
         rotated_image = pg.transform.rotate(self.image, math.degrees(-self.angle))
-        self.rect = rotated_image.get_rect(center=(xDisplay, yDisplay))
+        self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
         self.mask = pg.mask.from_surface(rotated_image)
         self.game.screen.blit(rotated_image, self.rect)
         
         #Turret
         rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(-self.turret_angle))
-        turret_rect = rotated_turret.get_rect(center=(xDisplay, yDisplay))
+        turret_rect = rotated_turret.get_rect(center=(self.xDisplay, self.yDisplay))
         self.game.screen.blit(rotated_turret, turret_rect)
 
     # Property to get the player's position
