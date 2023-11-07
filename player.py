@@ -69,7 +69,7 @@ class Player(pg.sprite.Sprite):
         if self.speed > player_max_speed: 
             self.speed = player_max_speed
 
-        # #Check for collisions before applying movement.
+        #Check for collisions before applying movement.
         if self.check_wall(int(self.x + self.x_change),int(self.y)): #If not colliding with a wall on the x axis,
             self.x += self.x_change #Then apply for that axis
         if self.check_wall(int(self.x),int(self.y+self.y_change)):
@@ -80,13 +80,16 @@ class Player(pg.sprite.Sprite):
             collisions = pg.sprite.spritecollide(self, group, False)
             if len(collisions) > 0: #If there exists a collision, 
                 for collision in collisions:
-                    x, y = pg.sprite.collide_mask(self.mask, collision.mask) #The x and y coordinate of the collision
+                    try: #The below method (pg.sprite.collide_mask) will return None if there is no longer a collision. 
+                        x, y = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision
+                    except(TypeError):
+                        break #If collide_mask returns None, then there is no collision to calculate.
 
                     #See notes on how this system works. 
                     #Getting the angle of the collision point to the center of the tank.
                     point_angle = math.atan((self.x - x) / (self.y - x))
 
-                    pg.draw.line(self.game.screen, 'red',(self.xDisplay, self.yDisplay) )
+                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay * math.cos(point_angle), self.yDisplay * math.sin(point_angle)), 2)
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
