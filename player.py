@@ -43,9 +43,9 @@ class Player(pg.sprite.Sprite):
             if not self.stopped:
                 if abs(self.speed) > accelsens:
                     self.speed *= 1 - (player_deceleration * self.game.delta_time)
-            else:
-                self.stopped = True
-                self.speed = 0
+                else:
+                    self.stopped = True
+                    self.speed = 0
 
         if keys[pg.K_a]: #Turning
             self.angle -= player_rot_speed * self.game.delta_time
