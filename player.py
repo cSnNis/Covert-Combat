@@ -11,14 +11,14 @@ class Player(pg.sprite.Sprite):
         self.x, self.y = player_pos  # Initial player position
         self.angle = player_angle  # Initial player angle
 
-        self.image = pg.image.load(tank_sprite_path).convert_alpha()  # Load player image
+        self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
         self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
         self.dx, self.dy = 0, 0  # Initialize speed components
         self.speed = 0
         
         self.turret_angle = 0  # Initial turret angle
-        self.turret_image = pg.image.load(turret_sprite_path).convert_alpha()  # Load turret image
+        self.turret_image = pg.image.load(turret_sprite_path).convert_alpha(); self.turret_image = pg.transform.scale(self.turret_image, (self.turret_image.get_width() * RESMULTX * tankSpriteScalingFactor, self.turret_image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load turret image
         
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
 
