@@ -88,8 +88,19 @@ class Player(pg.sprite.Sprite):
                     #See notes on how this system works. 
                     #Getting the angle of the collision point to the center of the tank.
                     point_angle = math.atan((self.x - x) / (self.y - x))
+                    
+                    #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
+                    if self.angle > point_angle:
+                        bisect_angle = self.angle
+                    else:
+                        bisect_angle = point_angle
+                    bisect_angle *= .5
+                    bisect_angle += math.pi
+                    bisect_angle %= 2 * math.pi
 
-                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay * math.cos(point_angle), self.yDisplay * math.sin(point_angle)), 2)
+                    
+
+                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay * math.cos(bisect_angle), self.yDisplay * math.sin(bisect_angle)), 2)
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
@@ -108,7 +119,6 @@ class Player(pg.sprite.Sprite):
         if not self.stopped:
             self.apply_movement()
         self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
-        #self.draw()  # Call draw method to render the player and turret
 
     # Method to draw the player and turret
     def draw(self):
