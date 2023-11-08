@@ -48,9 +48,11 @@ class Player(pg.sprite.Sprite):
                     self.speed = 0
 
         if keys[pg.K_a]: #Turning
+            self.stopped = False
             self.angle += player_rot_speed * self.game.delta_time
             self.angle %= math.tau # To keep the player angle below 2pi. Clever.
         if keys[pg.K_d]:
+            self.stopped = False
             self.angle -= player_rot_speed * self.game.delta_time
             self.angle %= math.tau 
 
@@ -86,7 +88,6 @@ class Player(pg.sprite.Sprite):
                         break #If collide_mask returns None, then there is no collision to calculate.
 
                     self.game.screen.set_at(maskCollisionPoint, 'blue')
-
                     self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
 
                     #Find that intersecting point in world game space.
@@ -96,6 +97,10 @@ class Player(pg.sprite.Sprite):
 
                     #Getting the angle of the collision point to the center of the tank.
                     collision_point_angle = math.atan((self.yDisplay - y) / (self.xDisplay - x)) 
+                    # if ((self.x > x) or (self.y > y)) or ((self.x < x) == (self.y > y)): #Due to atan being restricted to +-pi/2, 
+                    #     collision_point_angle += math.pi #We have to add pi if the true angle lies outside Q1 and Q2
+                    if (self.xDisplay > x): #If point is in Quadrant 2 or 3
+                        collision_point_angle += math.pi
                     
                     #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
                     if self.angle > collision_point_angle:
@@ -105,11 +110,10 @@ class Player(pg.sprite.Sprite):
                     
                     deflect_angle = (lesser + ((greater - lesser) / 2) + math.pi)
                     
-
                     pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
                     
                     pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(collision_point_angle) * COORDINATEMULTY), 2)
-                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                     pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(deflect_angle) * COORDINATEMULTY), 2) #deflection
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
