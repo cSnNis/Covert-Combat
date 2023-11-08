@@ -94,10 +94,8 @@ class Player(pg.sprite.Sprite):
                     y = self.rect.top + maskCollisionPoint[1]
                     pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
-
-                    #See notes on how this system works. 
                     #Getting the angle of the collision point to the center of the tank.
-                    collision_point_angle = math.atan((self.y - y) / (self.x - x))
+                    collision_point_angle = math.atan((self.y - y) / (self.x - x)) + math.pi
                     
                     #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
                     if self.angle > collision_point_angle:
@@ -109,8 +107,10 @@ class Player(pg.sprite.Sprite):
                     
 
                     pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
-                    #pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (x * RESMULTX, y * RESMULTY), 2)
-                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * 100 * RESMULTX, self.yDisplay + math.sin(deflect_angle) * 100 * RESMULTY), 2)
+                    
+                    pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(collision_point_angle) * COORDINATEMULTY), 2)
+                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+                    pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(deflect_angle) * COORDINATEMULTY), 2) #deflection
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
