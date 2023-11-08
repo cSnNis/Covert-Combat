@@ -81,7 +81,7 @@ class Player(pg.sprite.Sprite):
             if len(collisions) > 0: #If there exists a collision, 
                 for collision in collisions:
                     
-                    maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision
+                    maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                     if maskCollisionPoint == None:
                         break #If collide_mask returns None, then there is no collision to calculate.
 
@@ -90,13 +90,14 @@ class Player(pg.sprite.Sprite):
                     self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
 
                     #Find that intersecting point in world game space.
-                    x = self.rect.left + maskCollisionPoint[0]
+                    x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space.
                     y = self.rect.top + maskCollisionPoint[1]
-                    self.game.screen.set_at((x,y), 'blue')
+                    pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
+
 
                     #See notes on how this system works. 
                     #Getting the angle of the collision point to the center of the tank.
-                    collision_point_angle = math.atan((self.y - x) / (self.x - x))
+                    collision_point_angle = math.atan((self.y - y) / (self.x - x))
                     
                     #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
                     if self.angle > collision_point_angle:
