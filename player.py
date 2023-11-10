@@ -108,10 +108,10 @@ class Player(pg.sprite.Sprite):
                     self.speed = 0
 
         if keys[pg.K_a]: #Turning
-            self.angle -= player_rot_speed * self.game.delta_time
+            self.angle += player_rot_speed * self.game.delta_time
             self.angle %= math.tau # To keep the player angle below 2pi. Clever.
         if keys[pg.K_d]:
-            self.angle += player_rot_speed * self.game.delta_time
+            self.angle -= player_rot_speed * self.game.delta_time
             self.angle %= math.tau 
 
         if keys[pg.K_q]: #Turret turning
@@ -166,7 +166,7 @@ class Player(pg.sprite.Sprite):
         yDisplay = self.y * COORDINATEMULTY
         
         #Tank body
-        rotated_image = pg.transform.rotate(self.image, math.degrees(-self.angle))
+        rotated_image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.rect = rotated_image.get_rect(center=(xDisplay, yDisplay))
         self.mask = pg.mask.from_surface(rotated_image)
         self.game.screen.blit(rotated_image, self.rect)
@@ -175,6 +175,9 @@ class Player(pg.sprite.Sprite):
         rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(-self.turret_angle))
         turret_rect = rotated_turret.get_rect(center=(xDisplay, yDisplay))
         self.game.screen.blit(rotated_turret, turret_rect)
+
+        pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+
 
     # Property to get the player's position
     @property
