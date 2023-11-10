@@ -16,11 +16,9 @@ y_change = 0
 accelsens = .1 #How low x or y acceleration can go before it rounds to zero. This MUST be greater than the player_accel.
 player_max_speed = 3
 
-tankdimensions = 200, 100 
 tank_sprite_path = 'TankBody.png'
-
-turretdimensions = 200, 100
 turret_sprite_path = 'Turret.png'
+tankSpriteScalingFactor = 1
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
@@ -43,8 +41,3 @@ RESMULTX = res[0] / 1600
 RESMULTY = res[1] / 900
 
 COORDINATEMULT = COORDINATEMULTX, COORDINATEMULTY =  100 * RESMULTX, 100 * RESMULTY
-
-
-TANKDIMENSIONS = tankWidth, tankHeight = tankdimensions[0] * RESMULTX, tankdimensions[1] * RESMULTY
-
-TURRETDIMENSIONS = TURRETWIDTH, TURRETHEIGHT = turretdimensions[0] * RESMULTX, turretdimensions[1] * RESMULTY
