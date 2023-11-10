@@ -18,7 +18,7 @@ class Game:
     
   def new_game(self):
     self.map = Map(self)
-    self.player = Player(self)
+    self.player = Player(self,p1Inputs)
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 

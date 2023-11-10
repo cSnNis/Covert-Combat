@@ -13,7 +13,10 @@ class DebugDisplay:
         self.watch = { #Any value you want tracked, add it here.
             'deltaTime' : self.game.delta_time,
             'TankVelocity' : self.game.player.speed,
-            'TankCoordinates' : self.game.player.pos
+            'TankCoordinates' : self.game.player.display_pos,
+            'TankAngle' : self.game.player.angle,
+            'collisions' : pg.sprite.spritecollide(self.game.player, self.game.map.walls, False),
+            'maskLength' : self.game.player.mask
 
         }
 
