@@ -24,6 +24,8 @@ class Player(pg.sprite.Sprite):
         #Collision Variables
         self.collidables = [self.game.map.walls] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
+        self.isColliding = (False, 0)
+        self.deflectionSpeed = 0
 
         self.stopped = True
 
@@ -77,15 +79,17 @@ class Player(pg.sprite.Sprite):
         if self.check_wall(int(self.x),int(self.y+self.y_change)):
             self.y += self.y_change
 
+
         #Pixel-based collisions for the obstacles
+    def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
         for group in self.collidables: 
             collisions = pg.sprite.spritecollide(self, group, False)
             if len(collisions) > 0: #If there exists a collision, 
-                collision = collisions[0]
+                collision = collisions[0] #Only calculate the first, so far.
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                 if maskCollisionPoint == None:
-                    break #If collide_mask returns None, then there is no collision to calculate.
+                    return (False, 0) #If collide_mask returns None, then there is no collision to calculate.
 
                 self.game.screen.set_at(maskCollisionPoint, 'blue')
                 self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
@@ -119,13 +123,29 @@ class Player(pg.sprite.Sprite):
                 deflect_angle = lesser + ((greater - lesser) / 2)
                 if (greater - lesser) < math.pi:
                     deflect_angle += math.pi
+                self.deflectionSpeed = self.speed
                 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
                 
                 #Red is the tank's forward velocity, blue is the angle of collision, green is the unprocessed angle of collision, and purple is the calculated angle of deflection.
                 pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
                 pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-                pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection
+                pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
+
+                return (True, deflect_angle)
+            return (False, 0) #If there are no objects colliding, then return False also.
+
+    def handleCollision(self, deflect_angle):
+        self.x_change = self.deflectionSpeed * math.cos(deflect_angle) * self.game.delta_time
+        self.y_change = self.deflectionSpeed * math.sin(-deflect_angle) * self.game.delta_time
+
+        self.deflectionSpeed *= 1 - (player_deceleration * self.game.delta_time)
+        self.y += self.y_change
+        self.x += self.x_change
+
+        #Break the loop calling this function.
+        if (self.deflectionSpeed < accelsens):
+            self.isColliding = (False, 0, 0)
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
@@ -139,10 +159,17 @@ class Player(pg.sprite.Sprite):
 
     # Method to update the player's state
     def update(self):
-        #self.movement()  # Call movement method to handle movement
-        self.get_movement()
-        if not self.stopped:
-            self.apply_movement()
+        self.get_movement() #Get player inputs
+
+        if not self.stopped: 
+            #self.apply_movement() #Apply the movement
+
+            if self.isColliding[0]: #If there is collision detected, and not fully handled,
+                self.handleCollision(self.isColliding[1]) #Then handle it.
+            else:
+                self.apply_movement() #Apply the movement
+                self.isColliding = self.checkCollision() #Else, check for a collisionw
+
         self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
 
     # Method to draw the player and turret
