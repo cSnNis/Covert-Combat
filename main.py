@@ -29,13 +29,15 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
-    self.shell_group.draw(self.screen)
+    #self.shell_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
+      if event.type == pg.KEYDOWN and event.key == pg.K_SPACE: #test, will remove later
+          shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
 
     
   def run(self):

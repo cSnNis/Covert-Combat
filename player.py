@@ -12,8 +12,10 @@ class Player(pg.sprite.Sprite):
         self.angle = player_angle  # Initial player angle
         self.image = pg.image.load('TankBody.png').convert_alpha()  # Load player image
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
-        self.rect.center = (self.x * 200, self.y * 50)  # Set the initial position
+        self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
         self.dx, self.dy = 0, 0  # Initialize speed components
+        self.speed = 0
+        
         self.turret_angle = 0  # Initial turret angle
         self.turret_image = pg.image.load('Turret.png').convert_alpha()  # Load turret image
         self.mask = pg.mask.from_surface(self.image)
@@ -90,17 +92,26 @@ class Player(pg.sprite.Sprite):
 
     # Method to update the player's state
     def update(self):
-        self.movement()  # Call movement method to handle movement
+        #self.movement()  # Call movement method to handle movement
+        self.get_movement()
+        self.apply_movement()
         self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
-        self.draw()  # Call draw method to render the player and turret
+        #self.draw()  # Call draw method to render the player and turret
 
     # Method to draw the player and turret
     def draw(self):
+        xDisplay = self.x * COORDINATEMULTX
+        yDisplay = self.y * COORDINATEMULTY
+        
+        #Tank body
         rotated_image = pg.transform.rotate(self.image, math.degrees(-self.angle))
-        self.rect = rotated_image.get_rect(center=(self.x * 200, self.y * 50))
+        self.rect = rotated_image.get_rect(center=(xDisplay, yDisplay))
+        self.mask = pg.mask.from_surface(rotated_image)
         self.game.screen.blit(rotated_image, self.rect)
+        
+        #Turret
         rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(-self.turret_angle))
-        turret_rect = rotated_turret.get_rect(center=(self.x * 200, self.y * 50))
+        turret_rect = rotated_turret.get_rect(center=(xDisplay, yDisplay))
         self.game.screen.blit(rotated_turret, turret_rect)
 
     # Property to get the player's position
