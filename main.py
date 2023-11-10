@@ -10,6 +10,7 @@ class Game:
   #initiating and defining everthing made so far
   def __init__(self):
     pg.init()
+    pg.mixer.init()
     self.screen = pg.display.set_mode(res)
     self.delta_time = 1
     self.clock = pg.time.Clock()
@@ -20,6 +21,8 @@ class Game:
     self.player = Player(self)
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
+
+    self.bg_music = pg.mixer.Sound('TTFAFmusic.mp3')
 
   def update(self):
     self.player.update()
@@ -42,6 +45,7 @@ class Game:
         sys.exit()
     
   def run(self):
+    self.bg_music.play(-1)
     while True:
       self.check_events()
       self.update()
