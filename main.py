@@ -23,6 +23,7 @@ class Game:
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
     self.bg_music = pg.mixer.Sound('TTFAFmusic.mp3')
+    self.bg_music.set_volume(.25)
 
   def update(self):
     self.player.update()
