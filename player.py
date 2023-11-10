@@ -57,15 +57,15 @@ class Player(pg.sprite.Sprite):
             self.angle %= math.tau 
 
         if keys[pg.K_q]: #Turret turning
-            self.turret_angle -= player_rot_speed * self.game.delta_time
+            self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
         if keys[pg.K_e]:
-            self.turret_angle += player_rot_speed * self.game.delta_time
+            self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         self.x_change = self.speed * math.cos(self.angle) * self.game.delta_time
-        self.y_change = self.speed * math.sin(self.angle) * self.game.delta_time
+        self.y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
 
         #Throttle if max speed is reached.
         if self.speed > player_max_speed: 
@@ -100,11 +100,15 @@ class Player(pg.sprite.Sprite):
                 collision_point_angle = math.atan((self.yDisplay - y) / (self.xDisplay - x))
                 pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
 
-                # # if (self.xDisplay > x): #If point is in quadrant 2 or 3. Due to atan being restricted to +-pi/2, we have to add pi if the true angle lies outside Q1 and Q2 
-                # if self.yDisplay > y: #If point is in Quadrant 3
-                #     collision_point_angle = (2 * math.pi) - collision_point_angle
-                # collision_point_angle = (math.pi / 2) + -(collision_point_angle) #If not in Q3, then it's in Q2
-                
+                #Correct the angle for each quadrant, because arctan is restricted and is also stupid.
+                if (self.yDisplay > y) and (self.xDisplay < x): #Q1
+                    collision_point_angle = -collision_point_angle
+                if (self.yDisplay > y) and (self.xDisplay > x): #Q2
+                    collision_point_angle = math.pi - collision_point_angle
+                if (self.yDisplay < y) and (self.xDisplay > x): #Q3
+                    collision_point_angle = math.pi + abs(collision_point_angle)
+                if (self.yDisplay < y) and (self.xDisplay < x): #Q4  
+                    collision_point_angle = -(collision_point_angle) #If not in Q3, then it's in Q2
                 collision_point_angle %= 2 * math.pi
                 
                 #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
@@ -112,13 +116,16 @@ class Player(pg.sprite.Sprite):
                     greater = self.angle; lesser = collision_point_angle
                 else:
                     greater = collision_point_angle; lesser = self.angle
-                deflect_angle = lesser + ((greater - lesser) / 2) + math.pi
+                deflect_angle = lesser + ((greater - lesser) / 2)
+                if (greater - lesser) < math.pi:
+                    deflect_angle += math.pi
                 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
                 
+                #Red is the tank's forward velocity, blue is the angle of collision, green is the unprocessed angle of collision, and purple is the calculated angle of deflection.
                 pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
-                pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-                #   pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection
+                pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+                pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
@@ -146,16 +153,19 @@ class Player(pg.sprite.Sprite):
         #Tank body
         rotated_image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
+        rotated_image = pg.transform.rotate(self.image, math.degrees(self.angle))
+        self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
         self.mask = pg.mask.from_surface(rotated_image)
         self.game.screen.blit(rotated_image, self.rect)
         
         #Turret
         rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
         turret_rect = rotated_turret.get_rect(center=(self.xDisplay, self.yDisplay))
+        rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
+        turret_rect = rotated_turret.get_rect(center=(self.xDisplay, self.yDisplay))
         self.game.screen.blit(rotated_turret, turret_rect)
 
-        pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-
+        pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
 
     # Property to get the player's position
     @property
