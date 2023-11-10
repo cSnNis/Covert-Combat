@@ -155,12 +155,12 @@ class Player(pg.sprite.Sprite):
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
 
-    def shoot(self): #does not include angle right now, bullets will always shoot up
+    def shoot(self): #does not include angle right now, shells will always shoot up
         if len(shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.rect.centerx, self.rect.top) #Makes a bullet that shoots from center of the top side
-            return shell    
+            shell = Shell(self.rect.centerx, self.rect.top) #Makes a shell that shoots from center of the top side
+            return shell
 
     # Method to update the player's state
     def update(self):
@@ -213,11 +213,11 @@ class Shell(pg.sprite.Sprite):
         super().__init__()
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
         self.image.fill(225,255,0) #Yellow
-        self.rect = self.image.get_rect(center = (px, py)) #make a bullet that's center lies where the player is
+        self.rect = self.image.get_rect(center = (px, py)) #make a shell that's center lies where the player is
     def update(self):
-        self.rect.move_ip(0, -5)
+        self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
     def detect_wall(self, collision):
         for shell in collision.keys():
-            shell_group.remove(shell)
+            shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
 
 shell_group = pg.sprite.Group()
