@@ -26,9 +26,8 @@ class Player(pg.sprite.Sprite):
         self.isColliding = (False, 0)
         self.deflectionSpeed = 0
 
-
-        self.inputs = inputTuple
-        
+        self.inputs = p1Inputs
+    
         self.stopped = True
 
     def get_movement(self): #Get movement from the player.
@@ -51,18 +50,13 @@ class Player(pg.sprite.Sprite):
                     self.stopped = True
                     self.speed = 0
 
-        if keys[pg.K_a]: #Turning
-            self.stopped = False
-            self.angle += player_rot_speed * self.game.delta_time
         if keys[self.inputs[2]]: #Turning
-            self.angle -= player_rot_speed * self.game.delta_time
-            self.angle %= math.tau # To keep the player angle below 2pi. Clever.
-        if keys[pg.K_d]:
+            self.stopped = False
+            self.angle += player_rot_speed * self.game.delta_time
+        if keys[self.inputs[3]]:
             self.stopped = False
             self.angle -= player_rot_speed * self.game.delta_time
-        if keys[self.inputs[3]]:
-            self.angle += player_rot_speed * self.game.delta_time
-            self.angle %= math.tau 
+        self.angle %= math.tau 
 
         if keys[self.inputs[4]]: #Turret turning
             self.turret_angle -= player_rot_speed * self.game.delta_time
