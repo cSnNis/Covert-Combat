@@ -66,18 +66,29 @@ class Player(pg.sprite.Sprite):
             self.turret_angle %= math.tau 
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
-        self.x_change = self.speed * math.cos(self.angle) * self.game.delta_time
-        self.y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
+        x_change = self.speed * math.cos(self.angle) * self.game.delta_time
+        y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
+
+        #Check for collisions. If there exist collisions, (evident by deflectionSpeed being positive) then apply the calculated deflection velocity.
+        self.checkCollision()
+        if self.deflectionSpeed > 0:
+            x_change += self.deflectionSpeed * math.cos(self.deflectionAngle) * self.game.delta_time
+            y_change += self.deflectionSpeed * math.sin(-self.deflectionAngle) * self.game.delta_time
+
+            #Decelerating the deflection speed, so the bounce "dies out" due to friction.
+            self.deflectionSpeed *= 1 - (player_deceleration * self.game.delta_time)
+            if abs(self.deflectionSpeed) < accelsens: #If the deflection speed is low enough, stop calculating for deflection velocity.
+                self.deflectionSpeed = 0
 
         #Throttle if max speed is reached.
         if self.speed > player_max_speed: 
             self.speed = player_max_speed
 
         #Check for collisions before applying movement.
-        if self.check_wall(int(self.x + self.x_change),int(self.y)): #If not colliding with a wall on the x axis,
-            self.x += self.x_change #Then apply for that axis
-        if self.check_wall(int(self.x),int(self.y+self.y_change)):
-            self.y += self.y_change
+        if self.check_wall(int(self.x + x_change),int(self.y)): #If not colliding with a wall on the x axis,
+            self.x += x_change #Then apply for that axis
+        if self.check_wall(int(self.x),int(self.y+y_change)):
+            self.y += y_change
 
 
         #Pixel-based collisions for the obstacles
@@ -89,7 +100,7 @@ class Player(pg.sprite.Sprite):
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                 if maskCollisionPoint == None:
-                    return (False, 0) #If collide_mask returns None, then there is no collision to calculate.
+                    return False #If collide_mask returns None, then there is no collision to calculate.
 
                 self.game.screen.set_at(maskCollisionPoint, 'blue')
                 self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
@@ -123,7 +134,13 @@ class Player(pg.sprite.Sprite):
                 deflect_angle = lesser + ((greater - lesser) / 2)
                 if (greater - lesser) < math.pi:
                     deflect_angle += math.pi
-                self.deflectionSpeed = self.speed
+                
+                #Setting the deflection variables to be used by self.apply_movement.
+                if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
+                    self.deflectionSpeed = (abs(self.speed) * 1)
+                else:
+                    self.deflectionSpeed = minimumBounceSpeed
+                self.deflectionAngle = deflect_angle
                 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
                 
@@ -132,20 +149,8 @@ class Player(pg.sprite.Sprite):
                 pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                 pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
-                return (True, deflect_angle)
-            return (False, 0) #If there are no objects colliding, then return False also.
-
-    def handleCollision(self, deflect_angle):
-        self.x_change = self.deflectionSpeed * math.cos(deflect_angle) * self.game.delta_time
-        self.y_change = self.deflectionSpeed * math.sin(-deflect_angle) * self.game.delta_time
-
-        self.deflectionSpeed *= 1 - (player_deceleration * self.game.delta_time)
-        self.y += self.y_change
-        self.x += self.x_change
-
-        #Break the loop calling this function.
-        if (self.deflectionSpeed < accelsens):
-            self.isColliding = (False, 0, 0)
+                return True
+            return False #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
@@ -162,13 +167,7 @@ class Player(pg.sprite.Sprite):
         self.get_movement() #Get player inputs
 
         if not self.stopped: 
-            #self.apply_movement() #Apply the movement
-
-            if self.isColliding[0]: #If there is collision detected, and not fully handled,
-                self.handleCollision(self.isColliding[1]) #Then handle it.
-            else:
-                self.apply_movement() #Apply the movement
-                self.isColliding = self.checkCollision() #Else, check for a collisionw
+            self.apply_movement() #Apply the movement
 
         self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
 
@@ -203,6 +202,9 @@ class Player(pg.sprite.Sprite):
     @property
     def map_pos(self):
         return int(self.x), int(self.y)
+    @property
+    def display_pos(self):
+        return self.xDisplay, self.yDisplay
 
 
 #Bullet/Shell Class
