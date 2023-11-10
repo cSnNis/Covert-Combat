@@ -17,7 +17,12 @@ class Game:
   def new_game(self):
     self.map = Map(self)
     self.shell_group = pg.sprite.Group()
-    self.player = Player(self)
+    self.player = Player(self,p1Inputs)
+
+    self.debug = DebuggingDisplay.DebugDisplay(self)
+
+    self.bg_music = pg.mixer.Sound('TTFAFmusic.mp3')
+    self.bg_music.set_volume(.25)
 
   def update(self):
     self.player.update()
