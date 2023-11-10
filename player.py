@@ -149,7 +149,7 @@ class Player(pg.sprite.Sprite):
         if len(shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.rect.centerx, self.rect.top) #Makes a shell that shoots from center of the top side
+            shell = Shell(self) #Makes a shell that shoots from center of the top side
             print('Bullet shot')
             return shell
 
@@ -193,11 +193,11 @@ class Player(pg.sprite.Sprite):
 
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):
-    def __init__(self, px, py):
+    def __init__(self, player):
         super().__init__()
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill((255,255,0)) #Yellow '''yellow'''
-        self.rect = self.image.get_rect(center = (px, py)) #make a shell that's center lies where the player is
+        self.image.fill() #Yellow '''yellow'''
+        self.rect = self.image.get_rect(center = (player.rect.centerx, player.center.centery)) #make a shell that's center lies where the player is
     def update(self):
         self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
     def detect_wall(self, collision):

@@ -37,7 +37,7 @@ class Game:
         pg.quit()
         sys.exit()
       if event.type == pg.KEYDOWN and event.key == pg.K_SPACE: #test, will remove later
-          shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+        shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
 
     
   def run(self):
