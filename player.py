@@ -150,6 +150,7 @@ class Player(pg.sprite.Sprite):
             return None #something must be returned or it will cause an error down the line
         else:
             shell = Shell(self.rect.centerx, self.rect.top) #Makes a shell that shoots from center of the top side
+            print('Bullet shot')
             return shell
 
     # Method to update the player's state
