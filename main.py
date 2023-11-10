@@ -22,7 +22,7 @@ class Game:
   def update(self):
     self.player.update()
     pg.display.flip()
-    self.delta_time = self.clock.tick(fps)
+    self.delta_time = self.clock.tick(fps)/1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
     
   def draw(self):
