@@ -5,11 +5,12 @@ res = WIDTH,HEIGHT = 800,400
 fps = 60 
 
 #Tank Settings
+    #Starting position values
+player_pos = 2,5
 
 player_pos = 1.5,5
 player_angle = 0 #in radians
-
-    #Tank Movement
+    #Movement settings
 player_accel = 1
 player_deceleration = .8 #The rate at which velocity is lost after a player stops pressing. This value is multiplied by velocity, so a value of .5 would halve the velocity per second.
 x_change = 0
@@ -17,6 +18,15 @@ y_change = 0
 accelsens = .1 #How low x or y acceleration can go before it rounds to zero. This MUST be greater than the player_accel.
 player_max_speed = 3
 
+    #Collision Settings
+bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
+minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
+
+    #Collision Settings
+bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
+minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
+
+    
     #Tank Sprites
 tank_sprite_path = 'TankBody.png'
 turret_sprite_path = 'Turret.png'
