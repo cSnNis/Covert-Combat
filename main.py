@@ -4,11 +4,13 @@ import random
 from settings import *
 from map import *
 from player import *
+import DebuggingDisplay
 
 class Game:
   #initiating and defining everthing made so far
   def __init__(self):
     pg.init()
+    pg.mixer.init()
     self.screen = pg.display.set_mode(res)
     self.delta_time = 1
     self.clock = pg.time.Clock()
