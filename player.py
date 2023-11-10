@@ -195,7 +195,7 @@ class Shell(pg.sprite.Sprite):
     def __init__(self, px, py):
         super().__init__()
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill(225,255,0) #Yellow
+        self.image.fill((255,255,0)) #Yellow '''yellow'''
         self.rect = self.image.get_rect(center = (px, py)) #make a shell that's center lies where the player is
     def update(self):
         self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
