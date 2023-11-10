@@ -36,6 +36,7 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
+    self.shell_group.draw(self.screen)
 
     self.debug.draw()
 
