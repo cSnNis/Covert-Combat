@@ -100,7 +100,7 @@ class Player(pg.sprite.Sprite):
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                 if maskCollisionPoint == None:
-                    return False #If collide_mask returns None, then there is no collision to calculate.
+                    return False, None #If collide_mask returns None, then there is no collision to calculate.
 
                 self.game.screen.set_at(maskCollisionPoint, 'blue')
                 self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
@@ -149,8 +149,8 @@ class Player(pg.sprite.Sprite):
                 pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                 pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
-                return True
-            return False #If there are no objects colliding, then return False also.
+                return True, collision
+            return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
