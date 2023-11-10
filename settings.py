@@ -18,7 +18,7 @@ player_max_speed = 3
 
 tank_sprite_path = 'TankBody.png'
 turret_sprite_path = 'Turret.png'
-tankSpriteScalingFactor = .5
+tankSpriteScalingFactor = 1
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2

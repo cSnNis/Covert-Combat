@@ -115,15 +115,15 @@ class Player(pg.sprite.Sprite):
             self.angle %= math.tau 
 
         if keys[pg.K_q]: #Turret turning
-            self.turret_angle -= player_rot_speed * self.game.delta_time
+            self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
         if keys[pg.K_e]:
-            self.turret_angle += player_rot_speed * self.game.delta_time
+            self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         self.x_change = self.speed * math.cos(self.angle) * self.game.delta_time
-        self.y_change = self.speed * math.sin(self.angle) * self.game.delta_time
+        self.y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
 
         #Throttle if max speed is reached.
         if self.speed > player_max_speed: 
@@ -172,11 +172,11 @@ class Player(pg.sprite.Sprite):
         self.game.screen.blit(rotated_image, self.rect)
         
         #Turret
-        rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(-self.turret_angle))
+        rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
         turret_rect = rotated_turret.get_rect(center=(xDisplay, yDisplay))
         self.game.screen.blit(rotated_turret, turret_rect)
 
-        pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+        pg.draw.line(self.game.screen, 'red', (xDisplay, yDisplay), (xDisplay + (math.cos(self.angle) * COORDINATEMULTX), yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
 
 
     # Property to get the player's position
