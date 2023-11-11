@@ -83,6 +83,8 @@ class Player(pg.sprite.Sprite):
         #Throttle if max speed is reached.
         if self.speed > player_max_speed: 
             self.speed = player_max_speed
+        if self.speed < -player_max_speed:
+            self.speed = -player_max_speed
 
         #Check for collisions before applying movement.
         if self.check_wall(int(self.x + x_change),int(self.y)): #If not colliding with a wall on the x axis,
