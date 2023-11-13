@@ -28,6 +28,7 @@ class Game:
 
   def update(self):
     self.player.update()
+    self.shell_group.update()
     pg.display.flip()
     self.delta_time = self.clock.tick(fps)/1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -36,6 +37,7 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
+    self.shell_group.draw(self.screen)
     #self.shell_group.draw(self.screen)
 
   def check_events(self):
@@ -43,8 +45,10 @@ class Game:
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
-      if event.type == pg.KEYDOWN and event.key == pg.K_SPACE: #test, will remove later
-        shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+      if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+          shell = self.player.shoot() #attempts to create a bullet object, if the limit was reached, no bullet will be made
+          if shell: #if a bullet was produced (there is either an bullet object or None here)
+            self.shell_group.add(shell)
 
     
   def run(self):
