@@ -139,7 +139,7 @@ class Player(pg.sprite.Sprite):
                 
                 #Setting the deflection variables to be used by self.apply_movement.
                 if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
-                    self.deflectionSpeed = (abs(self.speed) * 1)
+                    self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
                 else:
                     self.deflectionSpeed = minimumBounceSpeed
                 self.deflectionAngle = deflect_angle

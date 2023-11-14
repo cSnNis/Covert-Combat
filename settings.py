@@ -22,10 +22,6 @@ player_max_speed = 3
 bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
 minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
 
-    #Collision Settings
-bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
-minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
-
     
     #Tank Sprites
 tank_sprite_path = 'TankBody.png'
