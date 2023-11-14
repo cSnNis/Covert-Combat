@@ -1,17 +1,8 @@
 import pygame as pg
 
 #Display settings
-res = WIDTH,HEIGHT = 800,450
+res = WIDTH,HEIGHT = 800,400
 fps = 60 
-
-#Start Menu settings
-splash_image_path = "CovertCombatSplashArt.png"
-logo_image_path = "CovertCombatLogo.png"
-start_instructions = ["You and the other player control two tanks amongst a sea of tanks.",
-                       "It is your job to hunt and kill the other player, without being killed.",
-                       "Press SPACE to start, or ESC to quit."]
-start_music_path = 'BF1942 Music/05 - Theme 2.mp3'
-start_font_path = 'Capsmall.ttf'
 
 #Tank Settings
     #Starting position values
@@ -29,8 +20,11 @@ player_max_speed = 3
 
     #Collision Settings
 bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
-minimumBounceSpeed = 1 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
-bounceDeceleration = .9 #The rate at which the bounce loses velocity.
+minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
+
+    #Collision Settings
+bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
+minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
 
     
     #Tank Sprites

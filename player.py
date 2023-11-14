@@ -76,7 +76,7 @@ class Player(pg.sprite.Sprite):
             y_change += self.deflectionSpeed * math.sin(-self.deflectionAngle) * self.game.delta_time
 
             #Decelerating the deflection speed, so the bounce "dies out" due to friction.
-            self.deflectionSpeed *= 1 - (bounceDeceleration * self.game.delta_time)
+            self.deflectionSpeed *= 1 - (player_deceleration * self.game.delta_time)
             if abs(self.deflectionSpeed) < accelsens: #If the deflection speed is low enough, stop calculating for deflection velocity.
                 self.deflectionSpeed = 0
 
@@ -138,8 +138,8 @@ class Player(pg.sprite.Sprite):
                     deflect_angle += math.pi
                 
                 #Setting the deflection variables to be used by self.apply_movement.
-                if abs(self.speed) > minimumBounceSpeed: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
-                    self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
+                if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
+                    self.deflectionSpeed = (abs(self.speed) * 1)
                 else:
                     self.deflectionSpeed = minimumBounceSpeed
                 self.deflectionAngle = deflect_angle
