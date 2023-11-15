@@ -69,7 +69,7 @@ class Player(pg.sprite.Sprite):
             self.turret_angle %= math.tau 
         
         if keys[pg.K_SPACE]:
-            shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+            shell = self.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
             if shell: #if a shell was produced (there is either an shell object or None here)
                 self.shell_group.add(shell)
 
