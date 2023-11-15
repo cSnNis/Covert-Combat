@@ -10,7 +10,7 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.x, self.y = player_pos  # Initial player position
         self.angle = player_angle  # Initial player angle
-        self.add(self.game.player_group)
+        self.add(self.game.player_group) #Adding the player to the sprite group, which ensures collisions against this tank will be tested for.
 
         self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
         self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
@@ -22,7 +22,7 @@ class Player(pg.sprite.Sprite):
         self.turret_image = pg.transform.scale_by(pg.image.load(turret_sprite_path).convert_alpha(), tank_scale)  # Load turret image
         
         #Collision Variables
-        self.collidables = [self.game.map.walls] #Anything that should be collided with should be in this group.
+        self.collidables = [self.game.map.walls, self.game.NPC_group] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
         self.isColliding = (False, 0)
         self.deflectionSpeed = 0
@@ -60,10 +60,10 @@ class Player(pg.sprite.Sprite):
         self.angle %= math.tau 
 
         if keys[self.inputs[4]]: #Turret turning
-            self.turret_angle += player_rot_speed * self.game.delta_time
+            self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
         if keys[self.inputs[5]]:
-            self.turret_angle -= player_rot_speed * self.game.delta_time
+            self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
@@ -77,7 +77,7 @@ class Player(pg.sprite.Sprite):
             y_change += self.deflectionSpeed * math.sin(-self.deflectionAngle) * self.game.delta_time
 
             #Decelerating the deflection speed, so the bounce "dies out" due to friction.
-            self.deflectionSpeed *= 1 - (player_deceleration * self.game.delta_time)
+            self.deflectionSpeed *= 1 - (bounceDeceleration * self.game.delta_time)
             if abs(self.deflectionSpeed) < accelsens: #If the deflection speed is low enough, stop calculating for deflection velocity.
                 self.deflectionSpeed = 0
 
@@ -139,7 +139,7 @@ class Player(pg.sprite.Sprite):
                     deflect_angle += math.pi
                 
                 #Setting the deflection variables to be used by self.apply_movement.
-                if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
+                if abs(self.speed) > minimumBounceSpeed: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
                     self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
                 else:
                     self.deflectionSpeed = minimumBounceSpeed
