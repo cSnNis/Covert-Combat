@@ -4,6 +4,15 @@ import pygame as pg
 res = WIDTH,HEIGHT = 800,400
 fps = 60 
 
+#Start Menu settings
+splash_image_path = "CovertCombatSplashArt.png"
+logo_image_path = "CovertCombatLogo.png"
+start_instructions = ["You and the other player control two tanks amongst a sea of tanks.",
+                       "It is your job to hunt and kill the other player, without being killed.",
+                       "Press SPACE to start, or ESC to quit."]
+start_music_path = 'BF1942 Music/06 - Vehicle 3.mp3'
+start_font_path = 'Capsmall.ttf'
+
 #Tank Settings
     #Starting position values
 player_pos = 2,5
