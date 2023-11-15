@@ -95,7 +95,7 @@ class Game:
 
     pg.display.flip()
     self.delta_time = self.clock.tick(fps) / 1000
-    pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
+    pg.display.set_caption(f'COVERT COMBAT {self.clock.get_fps() :.1f}')
     
   def draw(self):
     self.screen.fill('black')
@@ -117,7 +117,9 @@ class Game:
         sys.exit()
     
   def run(self):
-    self.bg_music.play(-1)
+    self.start_menu()
+    self.new_game()
+
     while True:
       self.check_events()
       self.update()
