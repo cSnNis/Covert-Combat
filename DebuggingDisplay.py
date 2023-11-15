@@ -12,11 +12,11 @@ class DebugDisplay:
     def update(self):
         self.watch = { #Any value you want tracked, add it here.
             'deltaTime' : self.game.delta_time,
-            'TankVelocity' : self.game.player.speed,
-            'TankCoordinates' : self.game.player.display_pos,
-            'TankAngle' : self.game.player.angle,
-            'collisions' : pg.sprite.spritecollide(self.game.player, self.game.map.walls, False),
-            'maskLength' : self.game.player.mask
+            'TankVelocity' : self.game.p1.speed,
+            'TankCoordinates' : self.game.p1.display_pos,
+            'TankAngle' : self.game.p1.angle,
+            'collisions' : pg.sprite.spritecollide(self.game.p1, self.game.map.walls, False),
+            'maskLength' : self.game.p1.mask
 
         }
 
