@@ -21,7 +21,6 @@ class Game:
     
   def new_game(self):
     self.map = Map(self)
-    self.shell_group = pg.sprite.Group()
     self.player = Player(self,p1Inputs)
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
@@ -32,7 +31,6 @@ class Game:
 
   def update(self):
     self.player.update()
-    self.shell_group.update()
     pg.display.flip()
     self.delta_time = self.clock.tick(fps)/1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -41,8 +39,6 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
-    self.shell_group.draw(self.screen)
-    #self.shell_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():
