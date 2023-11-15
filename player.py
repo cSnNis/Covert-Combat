@@ -32,6 +32,7 @@ class Player(pg.sprite.Sprite):
 
         #For shooting
         self.shell_group = pg.sprite.Group()
+        self.CooldownTimer = 2
         
     
         self.stopped = True
@@ -72,10 +73,13 @@ class Player(pg.sprite.Sprite):
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
         
+        self.CooldownTimer += self.game.delta_time
         if keys[pg.K_SPACE]:
-            shell = self.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
-            if shell: #if a shell was produced (there is either an shell object or None here)
-                self.shell_group.add(shell)
+            if self.CooldownTimer > .2:
+                self.CooldownTimer = 0
+                shell = self.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+                if shell: #if a shell was produced (there is either an shell object or None here)
+                    self.shell_group.add(shell)
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
@@ -106,6 +110,7 @@ class Player(pg.sprite.Sprite):
 
 
         #Pixel-based collisions for the obstacles
+    
     def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
         for group in self.collidables: 
             collisions = pg.sprite.spritecollide(self, group, False)
@@ -236,7 +241,6 @@ class Player(pg.sprite.Sprite):
     def display_pos(self):
         return self.xDisplay, self.yDisplay
 
-
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):
     def __init__(self, game, x, y, player):
@@ -248,13 +252,13 @@ class Shell(pg.sprite.Sprite):
         self.angle = player.turret_angle
         self.speed = 5
 
-    '''def update(self):
+    def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
         print(x_change, y_change)
         self.rect.centerx += x_change
         self.rect.centery += y_change
-        #self.rect.move_ip(x_change,y_change)'''
+        #self.rect.move_ip(x_change,y_change)
         
     def detect_wall(self, collision):
         for shell in collision.keys():
