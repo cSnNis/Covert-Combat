@@ -32,7 +32,7 @@ class Player(pg.sprite.Sprite):
 
         #For shooting
         self.shell_group = pg.sprite.Group()
-        
+
     
         self.stopped = True
 
@@ -246,15 +246,15 @@ class Shell(pg.sprite.Sprite):
         self.image.fill('yellow') #Yellow '''yellow'''
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
         self.angle = player.turret_angle
-        self.speed = 5
+        self.speed = 500
 
-    '''def update(self):
+    def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
         print(x_change, y_change)
-        self.rect.centerx += x_change
-        self.rect.centery += y_change
-        #self.rect.move_ip(x_change,y_change)'''
+        self.rect.centerx += x_change*RESMULTX
+        self.rect.centery += y_change*RESMULTY
+        #self.rect.move_ip(x_change,y_change)
         
     def detect_wall(self, collision):
         for shell in collision.keys():
