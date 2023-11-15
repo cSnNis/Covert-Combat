@@ -10,6 +10,7 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.x, self.y = player_pos  # Initial player position
         self.angle = player_angle  # Initial player angle
+        self.add(self.game.player_group)
 
         self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
         self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.

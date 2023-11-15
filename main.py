@@ -59,21 +59,27 @@ class Game:
 
     #Creating the map
     self.map = Map(self)
-    
+
     self.shell_group = pg.sprite.Group()
 
     #Spawning in the players.
+    self.player_group = pg.sprite.Group()
     self.p1 = Player(self,p1Inputs)
     self.p2 = Player(self, p2Inputs)
 
-    #Spawning in the NPC's
+    #Spawning in the NPCs
+    self.NPC_group = pg.sprite.Group()
     for i in range(5):
       NPC(self, (i,i), i)
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
   def update(self):
+
+    for player in self.player_group:
+      player.update()
     self.p1.update()
+    self.p2.update()
     self.debug.update()
     pg.display.flip()
     self.delta_time = self.clock.tick(fps) / 1000
@@ -83,6 +89,11 @@ class Game:
     self.screen.fill('black')
     self.map.draw()
     self.p1.draw()
+    self.p2.draw()
+    
+    for NPC in self.NPC_group:
+      NPC.draw()
+    
     self.shell_group.draw(self.screen)
 
     self.debug.draw()

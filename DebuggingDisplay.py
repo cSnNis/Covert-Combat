@@ -16,7 +16,8 @@ class DebugDisplay:
             'TankCoordinates' : self.game.p1.display_pos,
             'TankAngle' : self.game.p1.angle,
             'collisions' : pg.sprite.spritecollide(self.game.p1, self.game.map.walls, False),
-            'maskLength' : self.game.p1.mask
+            'maskLength' : self.game.p1.mask,
+            'NPC Group' : self.game.NPC_group
 
         }
 
