@@ -50,6 +50,7 @@ class Player(pg.sprite.Sprite):
                 else:
                     self.stopped = True
                     self.speed = 0
+                    self.deflectionSpeed = 0
 
         if keys[self.inputs[2]]: #Turning
             self.stopped = False
@@ -132,10 +133,17 @@ class Player(pg.sprite.Sprite):
                 collision_point_angle %= 2 * math.pi
                 
                 #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
-                if self.angle > collision_point_angle:
-                    greater = self.angle; lesser = collision_point_angle
+
+                #Creating a copy of self.angle.
+                if self.speed < 0: #If the tank is reversing,
+                    tankAngle = (self.angle + math.pi) % (2 * math.pi)
                 else:
-                    greater = collision_point_angle; lesser = self.angle
+                    tankAngle = self.angle
+
+                if self.angle > collision_point_angle:
+                    greater = tankAngle; lesser = collision_point_angle
+                else:
+                    greater = collision_point_angle; lesser = tankAngle
                 deflect_angle = lesser + ((greater - lesser) / 2)
                 if (greater - lesser) < math.pi:
                     deflect_angle += math.pi
