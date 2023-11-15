@@ -59,10 +59,10 @@ class Player(pg.sprite.Sprite):
         self.angle %= math.tau 
 
         if keys[self.inputs[4]]: #Turret turning
-            self.turret_angle -= player_rot_speed * self.game.delta_time
+            self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
         if keys[self.inputs[5]]:
-            self.turret_angle += player_rot_speed * self.game.delta_time
+            self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
