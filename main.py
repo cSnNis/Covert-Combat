@@ -32,9 +32,9 @@ class Game:
 
   def update(self):
     self.player.update()
-    self.debug.update()
+    self.shell_group.update()
     pg.display.flip()
-    self.delta_time = self.clock.tick(fps) / 1000
+    self.delta_time = self.clock.tick(fps)/1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
     
   def draw(self):
@@ -42,17 +42,20 @@ class Game:
     self.map.draw()
     self.player.draw()
     self.shell_group.draw(self.screen)
-
-    self.debug.draw()
+    #self.shell_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
+      if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+          shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+          if shell: #if a shell was produced (there is either an shell object or None here)
+            self.shell_group.add(shell)
+
     
   def run(self):
-    self.bg_music.play(-1)
     while True:
       self.check_events()
       self.update()

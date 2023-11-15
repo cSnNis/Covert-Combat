@@ -1,6 +1,8 @@
 from settings import *
 import pygame as pg
 import math
+from main import *
+import random
 
 # Define the Player class for the player character
 class Player(pg.sprite.Sprite):
@@ -169,10 +171,11 @@ class Player(pg.sprite.Sprite):
         return(x,y) not in self.game.map.world_map
 
     def shoot(self): #does not include angle right now, shells will always shoot up
-        if len(shell_group) >= 6:
+        if len(self.game.shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.rect.centerx, self.rect.top) #Makes a shell that shoots from center of the top side
+            shell = Shell(self.game, self.rect.centerx, self.rect.top, self.turret_angle) #Makes a shell that shoots from center of the top side
+            print('Bullet shot')
             return shell
 
     # Method to update the player's state
@@ -222,15 +225,44 @@ class Player(pg.sprite.Sprite):
 
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):
-    def __init__(self, px, py):
+    def __init__(self, game, x, y, angle):
         super().__init__()
+        self.game = game
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill(225,255,0) #Yellow
-        self.rect = self.image.get_rect(center = (px, py)) #make a shell that's center lies where the player is
+        self.image.fill('yellow') #Yellow '''yellow'''
+        self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
+        self.angle = angle
+        self.speed = 5
+
     def update(self):
-        self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
+        x_change = self.speed * math.cos(self.angle) * self.game.delta_time
+        y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
+        self.rect.move_ip(x_change,y_change)
+        
     def detect_wall(self, collision):
         for shell in collision.keys():
-            shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
+             self.game.shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
 
-shell_group = pg.sprite.Group()
+NPC = pg.sprite.Group()
+
+class NPC(Player):
+    def __init__(self):
+        super().__init__()
+        self.x = random.randint(0, screen_width)
+        self.y = random.randint(0,screen_height)
+        self.rect = self.rect.inflate(5,5)
+
+    def update(self):
+        pass
+
+    def spawn(self): #This does not spawn the tanks, it allows the tanks to appear if they are in a good position
+         #self.collidables, returns the name of the collided object and it's point in display space.
+        for group in self.collidables: 
+            collisions = pg.sprite.spritecollideany(self, group, False)
+            if collisions:  
+                if len(NPC) >= 3:
+                    return None #something must be returned or it will cause an error down the line
+        else: 
+            if not collisions: #no collisions detected, tank is clear to spawn
+                NPC.add(self)
+
