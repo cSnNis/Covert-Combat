@@ -16,8 +16,9 @@ class DebugDisplay:
             'TankCoordinates' : self.game.player.display_pos,
             'TankAngle' : self.game.player.angle,
             'collisions' : pg.sprite.spritecollide(self.game.player, self.game.map.walls, False),
-            'maskLength' : self.game.player.mask
-
+            'maskLength' : self.game.player.mask,
+            'Number Of Shells' : len(self.game.player.shell_group),
+            'CooldownTimer' : self.game.player.CooldownTimer
         }
 
     def draw(self):

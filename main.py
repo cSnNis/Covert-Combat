@@ -34,11 +34,15 @@ class Game:
     pg.display.flip()
     self.delta_time = self.clock.tick(fps)/1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
+
+    self.debug.update()
     
   def draw(self):
     self.screen.fill('black')
     self.map.draw()
     self.player.draw()
+
+    self.debug.draw()
 
   def check_events(self):
     for event in pg.event.get():
