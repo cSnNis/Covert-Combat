@@ -14,6 +14,9 @@ class Game:
     self.screen = pg.display.set_mode(res)
     self.delta_time = 1
     self.clock = pg.time.Clock()
+    self.bg_music = pg.mixer.music
+    self.soundMixer = pg.mixer
+    
     self.new_game()
     
   def new_game(self):
@@ -23,8 +26,9 @@ class Game:
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
-    self.bg_music = pg.mixer.Sound('TTFAFmusic.mp3')
+    self.bg_music.load('TTFAFmusic.mp3')
     self.bg_music.set_volume(.25)
+    self.bg_music.play()
 
   def update(self):
     self.player.update()
