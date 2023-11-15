@@ -67,6 +67,11 @@ class Player(pg.sprite.Sprite):
         if keys[self.inputs[5]]:
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
+        
+        if keys[pg.K_SPACE]:
+            shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+            if shell: #if a shell was produced (there is either an shell object or None here)
+                self.shell_group.add(shell)
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
@@ -175,7 +180,7 @@ class Player(pg.sprite.Sprite):
         if len(self.game.shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.game, self.rect.centerx, self.rect.top, self.turret_angle) #Makes a shell that shoots from center of the top side
+            shell = Shell(self.game, self.rect.centerx, self.rect.top, self) #Makes a shell that shoots from center of the top side
             print('Bullet shot')
             return shell
 
@@ -226,20 +231,21 @@ class Player(pg.sprite.Sprite):
 
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):
-    def __init__(self, game, x, y, angle):
+    def __init__(self, game, x, y, player):
         super().__init__()
         self.game = game
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
         self.image.fill('yellow') #Yellow '''yellow'''
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
-        self.angle = angle
+        self.angle = player.self.turret_angle
         self.speed = 5
 
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
-        self.rect.centerx+= x_change
-        self.rect.centery+= y_change
+        print(x_change, y_change)
+        self.rect.centerx += x_change
+        self.rect.centery += y_change
         #self.rect.move_ip(x_change,y_change)
         
     def detect_wall(self, collision):
