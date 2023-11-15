@@ -166,6 +166,7 @@ class Player(pg.sprite.Sprite):
                 pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
                 return True, collision
+            return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
@@ -237,7 +238,9 @@ class Shell(pg.sprite.Sprite):
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
-        self.rect.move_ip(x_change,y_change)
+        self.rect.centerx+= x_change
+        self.rect.centery+= y_change
+        #self.rect.move_ip(x_change,y_change)
         
     def detect_wall(self, collision):
         for shell in collision.keys():
@@ -262,7 +265,7 @@ class NPC(Player):
             if collisions:  
                 if len(NPC) >= 3:
                     return None #something must be returned or it will cause an error down the line
-        else: 
-            if not collisions: #no collisions detected, tank is clear to spawn
-                NPC.add(self)
+            else: 
+                if not collisions: #no collisions detected, tank is clear to spawn
+                    NPC.add(self)
 
