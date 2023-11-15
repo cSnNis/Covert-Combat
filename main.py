@@ -21,8 +21,9 @@ class Game:
     
   def new_game(self):
     self.map = Map(self)
+    self.player_group = pg.sprite.Group()
     self.player = Player(self,p1Inputs)
-
+    
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
     self.bg_music.load('TTFAFmusic.mp3')
