@@ -97,7 +97,9 @@ class Player(pg.sprite.Sprite):
     def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
         for group in self.collidables: 
             collisions = pg.sprite.spritecollide(self, group, False)
-            if len(collisions) > 0: #If there exists a collision, 
+            if not (len(collisions) > 0): #If there are no objects colliding, 
+                return False, None #Return false
+            else: #Otherwise, do all this calculation stuff.
                 collision = collisions[0] #Only calculate the first, so far.
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
@@ -140,6 +142,8 @@ class Player(pg.sprite.Sprite):
                 #Setting the deflection variables to be used by self.apply_movement.
                 if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
                     self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
+                elif abs(self.speed) > player_max_speed: #Deflections should be less than a player's maximum velocity.
+                    self.deflectionSpeed = player_max_speed
                 else:
                     self.deflectionSpeed = minimumBounceSpeed
                 self.deflectionAngle = deflect_angle
@@ -152,7 +156,6 @@ class Player(pg.sprite.Sprite):
                 pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
                 return True, collision
-            return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
