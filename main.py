@@ -4,6 +4,7 @@ import random
 from settings import *
 from map import *
 from player import *
+from NPC import *
 import DebuggingDisplay
 
 class Game:
@@ -21,8 +22,16 @@ class Game:
     
   def new_game(self):
     self.map = Map(self)
+    
     self.shell_group = pg.sprite.Group()
-    self.player = Player(self,p1Inputs)
+
+    #Spawning in the players.
+    self.p1 = Player(self,p1Inputs)
+    self.p2 = Player(self, p2Inputs)
+
+    #Spawning in the NPC's
+    for i in range(5):
+      NPC(self, (i,i), i)
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
@@ -31,7 +40,7 @@ class Game:
     self.bg_music.play()
 
   def update(self):
-    self.player.update()
+    self.p1.update()
     self.debug.update()
     pg.display.flip()
     self.delta_time = self.clock.tick(fps) / 1000
@@ -40,7 +49,7 @@ class Game:
   def draw(self):
     self.screen.fill('black')
     self.map.draw()
-    self.player.draw()
+    self.p1.draw()
     self.shell_group.draw(self.screen)
 
     self.debug.draw()

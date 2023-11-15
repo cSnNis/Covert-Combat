@@ -3,13 +3,13 @@ import pygame as pg
 import math
 
 # Define the Player class for the player character
-class Player(pg.sprite.Sprite):
-    def __init__(self, game, inputTuple):
-        # Initialize the player's attributes
+class NPC(pg.sprite.Sprite):
+    def __init__(self, game, startPosition, startAngle):
+        # Initialize the tank's attributes
         pg.sprite.Sprite.__init__(self)
         self.game = game
-        self.x, self.y = player_pos  # Initial player position
-        self.angle = player_angle  # Initial player angle
+        self.x, self.y = startPosition  # Initial tank position
+        self.angle =  startAngle # Initial tank angle
 
         self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
         self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
@@ -26,44 +26,14 @@ class Player(pg.sprite.Sprite):
         self.isColliding = (False, 0)
         self.deflectionSpeed = 0
 
-        self.inputs = inputTuple
+        self.inputs = p1Inputs
     
         self.stopped = True
 
-    def get_movement(self): #Get movement from the player.
-        keys = pg.key.get_pressed() #dictionary of keys pressed this frame
-        if keys[self.inputs[0]]: #Forward 
-            if self.speed < 0: #If the tank is moving backward and is now trying to move forward, it should also deccelerate.
-                self.speed *= 1 - (player_deceleration * self.game.delta_time)
-            self.stopped = False
-            self.speed += player_accel * self.game.delta_time
-        elif keys[self.inputs[1]]: #Backward acceleration
-            if self.speed > 0: #If the tank is moving forward and is now trying to move backward, then the tank should also deccelerate
-                self.speed *= 1 - (player_deceleration * self.game.delta_time)
-            self.stopped = False
-            self.speed -= player_accel * self.game.delta_time
-        else: #No inputs, begin decelerating
-            if not self.stopped:
-                if abs(self.speed) > accelsens:
-                    self.speed *= 1 - (player_deceleration * self.game.delta_time)
-                else:
-                    self.stopped = True
-                    self.speed = 0
-
-        if keys[self.inputs[2]]: #Turning
-            self.stopped = False
-            self.angle += player_rot_speed * self.game.delta_time
-        if keys[self.inputs[3]]:
-            self.stopped = False
-            self.angle -= player_rot_speed * self.game.delta_time
-        self.angle %= math.tau 
-
-        if keys[self.inputs[4]]: #Turret turning
-            self.turret_angle += player_rot_speed * self.game.delta_time
-            self.turret_angle %= math.tau 
-        if keys[self.inputs[5]]:
-            self.turret_angle -= player_rot_speed * self.game.delta_time
-            self.turret_angle %= math.tau 
+    def get_movement(self): #Generate movement.
+        self.turret_angle %= math.tau
+        #Remember to set self.stopped to False if it moves.
+        pass
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
@@ -76,7 +46,7 @@ class Player(pg.sprite.Sprite):
             y_change += self.deflectionSpeed * math.sin(-self.deflectionAngle) * self.game.delta_time
 
             #Decelerating the deflection speed, so the bounce "dies out" due to friction.
-            self.deflectionSpeed *= 1 - (player_deceleration * self.game.delta_time)
+            self.deflectionSpeed *= 1 - (bounceDeceleration * self.game.delta_time)
             if abs(self.deflectionSpeed) < accelsens: #If the deflection speed is low enough, stop calculating for deflection velocity.
                 self.deflectionSpeed = 0
 
@@ -138,7 +108,7 @@ class Player(pg.sprite.Sprite):
                     deflect_angle += math.pi
                 
                 #Setting the deflection variables to be used by self.apply_movement.
-                if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
+                if abs(self.speed) > minimumBounceSpeed: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
                     self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
                 else:
                     self.deflectionSpeed = minimumBounceSpeed
@@ -156,13 +126,6 @@ class Player(pg.sprite.Sprite):
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
-
-    def shoot(self): #does not include angle right now, shells will always shoot up
-        if len(shell_group) >= 6:
-            return None #something must be returned or it will cause an error down the line
-        else:
-            shell = Shell(self.rect.centerx, self.rect.top) #Makes a shell that shoots from center of the top side
-            return shell
 
     # Method to update the player's state
     def update(self):
