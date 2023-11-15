@@ -46,8 +46,8 @@ class Game:
         pg.quit()
         sys.exit()
       if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-          shell = self.player.shoot() #attempts to create a bullet object, if the limit was reached, no bullet will be made
-          if shell: #if a bullet was produced (there is either an bullet object or None here)
+          shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+          if shell: #if a shell was produced (there is either an shell object or None here)
             self.shell_group.add(shell)
 
     
