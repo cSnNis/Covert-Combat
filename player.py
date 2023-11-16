@@ -247,13 +247,14 @@ class Shell(pg.sprite.Sprite):
     def __init__(self, game, x, y, player):
         super().__init__()
         self.game = game
-        self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill('yellow') #Yellow '''yellow'''
+        self.angle = player.turret_angle
+        self.image = pg.transform.scale_by(pg.image.load('Shell.png').convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
+        # self.image.fill('yellow') #Yellow '''yellow'''
+        self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
-        self.angle = player.turret_angle
         self.collidables = [self.game.map.walls, self.game.player_group]
-        self.speed = 500
+        self.speed = 50
 
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
