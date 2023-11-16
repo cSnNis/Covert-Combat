@@ -190,7 +190,7 @@ class Player(pg.sprite.Sprite):
         if len(self.shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.game, self.rect.centerx, self.rect.top, self) #Makes a shell that shoots from center of the top side
+            shell = Shell(self.game, self.rect.centerx, self.rect.centery, self) #Makes a shell that shoots from center of the top side
             print('Bullet shot')
             return shell
 
@@ -281,8 +281,6 @@ class Shell(pg.sprite.Sprite):
                 y = self.rect.top + maskCollisionPoint[1]
 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
-
-                #self.kill()
 
                 return True, collision, (x,y)
             return False, None, (0,0) #If there are no objects colliding, then return False also.
