@@ -60,10 +60,6 @@ class Game:
           return
   
   def new_game(self): #The actual game.
-    #Starting the music
-    self.bg_music.load('TTFAFmusic.mp3')
-    self.bg_music.set_volume(.25)
-    self.bg_music.play()
 
     #Creating the map
     self.map = Map(self)
