@@ -53,6 +53,11 @@ class Player(pg.sprite.Sprite):
                     self.speed = 0
                     self.deflectionSpeed = 0
 
+        if keys == pg.K_SPACE:
+            shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+            if shell: #if a shell was produced (there is either an shell object or None here)
+              self.shell_group.add(shell)
+
         if keys[self.inputs[2]]: #Turning
             self.stopped = False
             self.angle += player_rot_speed * self.game.delta_time
@@ -208,7 +213,7 @@ class Player(pg.sprite.Sprite):
         self.game.screen.blit(rotated_turret, turret_rect)
 
         pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-
+        #self.shell_group.draw(self.screen)
     # Property to get the player's position
     @property
     def pos(self):
@@ -237,7 +242,10 @@ class Shell(pg.sprite.Sprite):
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
-        self.rect.move_ip(x_change,y_change)
+       # self.rect.move_ip(x_change,y_change)
+        keys = pg.key.get_pressed()
+    def draw():
+        pg.shell_group.draw(self.screen)
         
     def detect_wall(self, collision):
         for shell in collision.keys():
