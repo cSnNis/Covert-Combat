@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame import mixer
 import sys
 import random
 from settings import *
@@ -9,6 +10,7 @@ import DebuggingDisplay
 class Game:
   #initiating and defining everthing made so far
   def __init__(self):
+    pg.mixer.pre_init(44100, -16, 1, 512)
     pg.init()
     pg.mixer.init()
     self.screen = pg.display.set_mode(res)
@@ -23,8 +25,8 @@ class Game:
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
-    self.bg_music = pg.mixer.Sound('TTFAFmusic.mp3')
-    self.bg_music.set_volume(.25)
+    mixer.music.load('BattleMusic.mp3')
+    mixer.music.set_volume(.25)
 
   def update(self):
     self.player.update()
@@ -46,9 +48,13 @@ class Game:
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
+      if event.type == pg.KEYDOWN and event.key == pg.K_m:
+        if mixer.music.get_busy() == False:
+          mixer.music.play(-1)
+        else:
+          mixer.music.stop()
     
   def run(self):
-    self.bg_music.play(-1)
     while True:
       self.check_events()
       self.update()
