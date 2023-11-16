@@ -217,6 +217,8 @@ class Player(pg.sprite.Sprite):
         self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
         self.mask = pg.mask.from_surface(rotated_image)
         self.game.screen.blit(rotated_image, self.rect)
+
+        self.shell_group.draw(self.game.screen) #to draw the shells
         
         #Turret
         rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
@@ -226,8 +228,6 @@ class Player(pg.sprite.Sprite):
         self.game.screen.blit(rotated_turret, turret_rect)
 
         pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-
-        self.shell_group.draw(self.game.screen) #to draw the shells
 
     # Property to get the player's position
     @property
