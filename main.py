@@ -16,6 +16,11 @@ class Game:
     self.screen = pg.display.set_mode(res)
     self.delta_time = 1
     self.clock = pg.time.Clock()
+    self.bg_music = pg.mixer.music
+    self.soundMixer = pg.mixer
+    self.bg_image = pg.transform.scale(pg.image.load('sand.png'), res)
+    self.bg_rect = self.bg_image.get_rect(topleft = (0,0))
+    
     self.new_game()
     
   def new_game(self):
@@ -30,18 +35,18 @@ class Game:
 
   def update(self):
     self.player.update()
-    self.debug.update()
+    self.shell_group.update()
     pg.display.flip()
-    self.delta_time = self.clock.tick(fps) / 1000
+    self.delta_time = self.clock.tick(fps)/1000
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
     
   def draw(self):
-    self.screen.fill('black')
+    self.screen.blit(self.bg_image, self.bg_rect)
+    
     self.map.draw()
     self.player.draw()
     self.shell_group.draw(self.screen)
-
-    self.debug.draw()
+    #self.shell_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():
@@ -53,6 +58,11 @@ class Game:
           mixer.music.play(-1)
         else:
           mixer.music.stop()
+      if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+          shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+          if shell: #if a shell was produced (there is either an shell object or None here)
+            self.shell_group.add(shell)
+
     
   def run(self):
     while True:
@@ -60,7 +70,7 @@ class Game:
       self.update()
       self.draw()
   
-      
+  
   
 if __name__ == '__main__':
   game = Game()

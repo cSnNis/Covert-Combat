@@ -1,6 +1,8 @@
 from settings import *
 import pygame as pg
 import math
+from main import *
+import random
 
 # Define the Player class for the player character
 class Player(pg.sprite.Sprite):
@@ -65,6 +67,7 @@ class Player(pg.sprite.Sprite):
                     self.stopped = True
                     self.speed = 0
                     self.engine_sound.stop()
+                    self.deflectionSpeed = 0
 
         if keys[self.inputs[2]]: #Turning
             self.stopped = False
@@ -75,10 +78,10 @@ class Player(pg.sprite.Sprite):
         self.angle %= math.tau 
 
         if keys[self.inputs[4]]: #Turret turning
-            self.turret_angle -= player_rot_speed * self.game.delta_time
+            self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
         if keys[self.inputs[5]]:
-            self.turret_angle += player_rot_speed * self.game.delta_time
+            self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
 
         if keys[self.inputs[5]] or keys[self.inputs[4]]:
@@ -106,6 +109,8 @@ class Player(pg.sprite.Sprite):
         #Throttle if max speed is reached.
         if self.speed > player_max_speed: 
             self.speed = player_max_speed
+        if self.speed < -player_max_speed:
+            self.speed = -player_max_speed
 
         #Check for collisions before applying movement.
         if self.check_wall(int(self.x + x_change),int(self.y)): #If not colliding with a wall on the x axis,
@@ -118,7 +123,9 @@ class Player(pg.sprite.Sprite):
     def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
         for group in self.collidables: 
             collisions = pg.sprite.spritecollide(self, group, False)
-            if len(collisions) > 0: #If there exists a collision, 
+            if not (len(collisions) > 0): #If there are no objects colliding, 
+                return False, None #Return false
+            else: #Otherwise, do all this calculation stuff.
                 collision = collisions[0] #Only calculate the first, so far.
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
@@ -150,17 +157,26 @@ class Player(pg.sprite.Sprite):
                 collision_point_angle %= 2 * math.pi
                 
                 #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
-                if self.angle > collision_point_angle:
-                    greater = self.angle; lesser = collision_point_angle
+
+                #Creating a copy of self.angle.
+                if self.speed < 0: #If the tank is reversing,
+                    tankAngle = (self.angle + math.pi) % (2 * math.pi)
                 else:
-                    greater = collision_point_angle; lesser = self.angle
+                    tankAngle = self.angle
+
+                if self.angle > collision_point_angle:
+                    greater = tankAngle; lesser = collision_point_angle
+                else:
+                    greater = collision_point_angle; lesser = tankAngle
                 deflect_angle = lesser + ((greater - lesser) / 2)
                 if (greater - lesser) < math.pi:
                     deflect_angle += math.pi
                 
                 #Setting the deflection variables to be used by self.apply_movement.
                 if abs(self.speed) > accelsens: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
-                    self.deflectionSpeed = (abs(self.speed) * 1)
+                    self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
+                elif abs(self.speed) > player_max_speed: #Deflections should be less than a player's maximum velocity.
+                    self.deflectionSpeed = player_max_speed
                 else:
                     self.deflectionSpeed = minimumBounceSpeed
                 self.deflectionAngle = deflect_angle
@@ -176,16 +192,16 @@ class Player(pg.sprite.Sprite):
                     self.wall_thud_sound.play()
 
                 return True, collision
-            return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
 
     def shoot(self): #does not include angle right now, shells will always shoot up
-        if len(shell_group) >= 6:
+        if len(self.game.shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.rect.centerx, self.rect.top) #Makes a shell that shoots from center of the top side
+            shell = Shell(self.game, self.rect.centerx, self.rect.top, self.turret_angle) #Makes a shell that shoots from center of the top side
+            print('Bullet shot')
             return shell
 
     # Method to update the player's state
@@ -235,15 +251,44 @@ class Player(pg.sprite.Sprite):
 
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):
-    def __init__(self, px, py):
+    def __init__(self, game, x, y, angle):
         super().__init__()
+        self.game = game
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill(225,255,0) #Yellow
-        self.rect = self.image.get_rect(center = (px, py)) #make a shell that's center lies where the player is
+        self.image.fill('yellow') #Yellow '''yellow'''
+        self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
+        self.angle = angle
+        self.speed = 5
+
     def update(self):
-        self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
+        x_change = self.speed * math.cos(self.angle) * self.game.delta_time
+        y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
+        self.rect.move_ip(x_change,y_change)
+        
     def detect_wall(self, collision):
         for shell in collision.keys():
-            shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
+             self.game.shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
 
-shell_group = pg.sprite.Group()
+NPC = pg.sprite.Group()
+
+class NPC(Player):
+    def __init__(self):
+        super().__init__()
+        self.x = random.randint(0, screen_width)
+        self.y = random.randint(0,screen_height)
+        self.rect = self.rect.inflate(5,5)
+
+    def update(self):
+        pass
+
+    def spawn(self): #This does not spawn the tanks, it allows the tanks to appear if they are in a good position
+         #self.collidables, returns the name of the collided object and it's point in display space.
+        for group in self.collidables: 
+            collisions = pg.sprite.spritecollideany(self, group, False)
+            if collisions:  
+                if len(NPC) >= 3:
+                    return None #something must be returned or it will cause an error down the line
+        else: 
+            if not collisions: #no collisions detected, tank is clear to spawn
+                NPC.add(self)
+
