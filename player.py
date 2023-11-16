@@ -254,14 +254,14 @@ class Shell(pg.sprite.Sprite):
         self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
         self.collidables = [self.game.map.walls, self.game.player_group]
-        self.speed = 50
+        self.speed = 500 #If you adjust the speed, keep it within the hundreds range
 
     def update(self):
-        x_change = self.speed * math.cos(self.angle) * self.game.delta_time
+        x_change = self.speed * math.cos(self.angle) * self.game.delta_time #uses the same angle calculations as the player's turret
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
-        self.rect.centerx += x_change
+        self.rect.centerx += x_change #moves the center every time it updates
         self.rect.centery += y_change
-        self.checkCollision()
+        self.checkCollision() #checks to see if hit something afer moving
         #self.rect.move_ip(x_change,y_change)
         
     def checkCollision(self): #Detects for pixel-based collisions between this sprite and anything in group self.collidables, returns the name of the collided object and it's point in display space.
