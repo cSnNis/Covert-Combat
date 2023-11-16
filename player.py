@@ -30,6 +30,11 @@ class Player(pg.sprite.Sprite):
         self.deflectionSpeed = 0
 
         self.inputs = inputTuple
+
+        #For shooting
+        self.shell_group = pg.sprite.Group()
+        self.CooldownTimer = 2
+        
     
         self.stopped = True
         self.turretMovement = False
@@ -84,6 +89,14 @@ class Player(pg.sprite.Sprite):
         if keys[self.inputs[5]]:
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
+        
+        self.CooldownTimer += self.game.delta_time
+        if keys[pg.K_SPACE]:
+            if self.CooldownTimer > .2:
+                self.CooldownTimer = 0
+                shell = self.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+                if shell: #if a shell was produced (there is either an shell object or None here)
+                    self.shell_group.add(shell)
 
         if keys[self.inputs[5]] or keys[self.inputs[4]]:
             if self.turret_rot_sound.get_num_channels() == 0:
@@ -121,6 +134,7 @@ class Player(pg.sprite.Sprite):
 
 
         #Pixel-based collisions for the obstacles
+    
     def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
         for group in self.collidables: 
             collisions = pg.sprite.spritecollide(self, group, False)
@@ -193,15 +207,16 @@ class Player(pg.sprite.Sprite):
                     self.wall_thud_sound.play()
 
                 return True, collision
+            return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
 
     def shoot(self): #does not include angle right now, shells will always shoot up
-        if len(self.game.shell_group) >= 6:
+        if len(self.shell_group) >= 6:
             return None #something must be returned or it will cause an error down the line
         else:
-            shell = Shell(self.game, self.rect.centerx, self.rect.top, self.turret_angle) #Makes a shell that shoots from center of the top side
+            shell = Shell(self.game, self.rect.centerx, self.rect.centery, self) #Makes a shell that shoots from center of the top side
             print('Bullet shot')
             return shell
 
@@ -213,6 +228,8 @@ class Player(pg.sprite.Sprite):
             self.apply_movement() #Apply the movement
 
         self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
+
+        self.shell_group.update()
 
     # Method to draw the player and turret
     def draw(self):
@@ -226,6 +243,8 @@ class Player(pg.sprite.Sprite):
         self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
         self.mask = pg.mask.from_surface(rotated_image)
         self.game.screen.blit(rotated_image, self.rect)
+
+        self.shell_group.draw(self.game.screen) #to draw the shells
         
         #Turret
         rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
@@ -249,26 +268,50 @@ class Player(pg.sprite.Sprite):
     def display_pos(self):
         return self.xDisplay, self.yDisplay
 
-
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):
-    def __init__(self, game, x, y, angle):
+    def __init__(self, game, x, y, player):
         super().__init__()
         self.game = game
-        self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill('yellow') #Yellow '''yellow'''
+        self.angle = player.turret_angle
+        self.image = pg.transform.scale_by(pg.image.load('Shell.png').convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
+        # self.image.fill('yellow') #Yellow '''yellow'''
+        self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
+        self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
-        self.angle = angle
-        self.speed = 5
+        self.collidables = [self.game.map.walls, self.game.player_group]
+        self.speed = 500 #If you adjust the speed, keep it within the hundreds range
 
     def update(self):
-        x_change = self.speed * math.cos(self.angle) * self.game.delta_time
+        x_change = self.speed * math.cos(self.angle) * self.game.delta_time #uses the same angle calculations as the player's turret
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
-        self.rect.move_ip(x_change,y_change)
+        self.rect.centerx += x_change #moves the center every time it updates
+        self.rect.centery += y_change
+        self.checkCollision() #checks to see if hit something afer moving
+        #self.rect.move_ip(x_change,y_change)
         
-    def detect_wall(self, collision):
-        for shell in collision.keys():
-             self.game.shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
+    def checkCollision(self): #Detects for pixel-based collisions between this sprite and anything in group self.collidables, returns the name of the collided object and it's point in display space.
+        for group in self.collidables: 
+            collisions = pg.sprite.spritecollide(self, group, False)
+            if len(collisions) > 0: #If there exists a collision, 
+                collision = collisions[0] #Only calculate the first object of this group.
+                maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
+                print("COLLIDED WITH " + str(collision))
+                self.kill()
+
+                if maskCollisionPoint == None:
+                    return False, None, (0,0) #If collide_mask returns None, then there is no collision to calculate.
+
+                #Find that intersecting point in world game space.
+                x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
+                y = self.rect.top + maskCollisionPoint[1]
+
+                pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
+
+                return True, collision, (x,y)
+            return False, None, (0,0) #If there are no objects colliding, then return False also.
+            
+
 
 NPC = pg.sprite.Group()
 
@@ -289,7 +332,7 @@ class NPC(Player):
             if collisions:  
                 if len(NPC) >= 3:
                     return None #something must be returned or it will cause an error down the line
-        else: 
-            if not collisions: #no collisions detected, tank is clear to spawn
-                NPC.add(self)
+            else: 
+                if not collisions: #no collisions detected, tank is clear to spawn
+                    NPC.add(self)
 

@@ -17,8 +17,10 @@ class DebugDisplay:
             'TankAngle' : self.game.p1.angle,
             'collisions' : pg.sprite.spritecollide(self.game.p1, self.game.map.walls, False),
             'maskLength' : self.game.p1.mask,
-            'NPC Group' : self.game.NPC_group
-
+            'NPC Group' : self.game.NPC_group,
+            'Number Of Shells' : len(self.game.player.shell_group),
+            'CooldownTimer' : self.game.player.CooldownTimer
+            
         }
 
     def draw(self):
