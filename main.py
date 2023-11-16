@@ -16,6 +16,8 @@ class Game:
     self.clock = pg.time.Clock()
     self.bg_music = pg.mixer.music
     self.soundMixer = pg.mixer
+    self.bg_image = pg.transform.scale(pg.image.load('sand.png'), res)
+    self.bg_rect = self.bg_image.get_rect(topleft = (0,0))
     
     self.new_game()
     
@@ -30,6 +32,7 @@ class Game:
     self.bg_music.set_volume(.25)
     self.bg_music.play()
 
+
   def update(self):
     self.player.update()
     self.shell_group.update()
@@ -38,7 +41,8 @@ class Game:
     pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
     
   def draw(self):
-    self.screen.fill('black')
+    self.screen.blit(self.bg_image, self.bg_rect)
+    
     self.map.draw()
     self.player.draw()
     self.shell_group.draw(self.screen)
