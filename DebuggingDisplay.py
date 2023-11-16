@@ -19,6 +19,7 @@ class DebugDisplay:
             'maskLength' : self.game.player.mask,
             'Number Of Shells' : len(self.game.player.shell_group),
             'CooldownTimer' : self.game.player.CooldownTimer
+            
         }
 
     def draw(self):

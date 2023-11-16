@@ -249,6 +249,7 @@ class Shell(pg.sprite.Sprite):
         self.game = game
         self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
         self.image.fill('yellow') #Yellow '''yellow'''
+        self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
         self.angle = player.turret_angle
         self.collidables = [self.game.map.walls, self.game.player_group]
@@ -257,9 +258,9 @@ class Shell(pg.sprite.Sprite):
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
-        print(x_change, y_change)
         self.rect.centerx += x_change
         self.rect.centery += y_change
+        self.checkCollision()
         #self.rect.move_ip(x_change,y_change)
         
     def checkCollision(self): #Detects for pixel-based collisions between this sprite and anything in group self.collidables, returns the name of the collided object and it's point in display space.
@@ -268,12 +269,11 @@ class Shell(pg.sprite.Sprite):
             if len(collisions) > 0: #If there exists a collision, 
                 collision = collisions[0] #Only calculate the first object of this group.
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
-                
+                print("COLLIDED WITH " + str(collision))
+                self.kill()
+
                 if maskCollisionPoint == None:
                     return False, None, (0,0) #If collide_mask returns None, then there is no collision to calculate.
-
-                self.game.screen.set_at(maskCollisionPoint, 'blue')
-                self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
 
                 #Find that intersecting point in world game space.
                 x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
@@ -281,7 +281,7 @@ class Shell(pg.sprite.Sprite):
 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
-                self.kill()
+                #self.kill()
 
                 return True, collision, (x,y)
             return False, None, (0,0) #If there are no objects colliding, then return False also.
