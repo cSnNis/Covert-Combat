@@ -32,6 +32,14 @@ class Player(pg.sprite.Sprite):
         self.inputs = inputTuple
     
         self.stopped = True
+        self.turretMovement = False
+
+        self.turret_rot_sound = pg.mixer.Sound('TurretRotate.mp3')
+        self.turret_rot_sound.set_volume(.2)
+        self.wall_thud_sound = pg.mixer.Sound('WallThud.mp3')
+        self.wall_thud_sound.set_volume(.75)
+        self.engine_sound = pg.mixer.Sound('EngineSound.mp3')
+
 
     def get_movement(self): #Get movement from the player.
         keys = pg.key.get_pressed() #dictionary of keys pressed this frame
@@ -39,19 +47,27 @@ class Player(pg.sprite.Sprite):
             if self.speed < 0: #If the tank is moving backward and is now trying to move forward, it should also deccelerate.
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
             self.stopped = False
-            self.speed += player_accel * self.game.delta_time
+            self.speed += player_accel * self.game.delta_time            
+            self.engine_sound.set_volume(self.speed/5)
+            if self.engine_sound.get_num_channels() == 0:
+                self.engine_sound.play(-1)
         elif keys[self.inputs[1]]: #Backward acceleration
             if self.speed > 0: #If the tank is moving forward and is now trying to move backward, then the tank should also deccelerate
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
             self.stopped = False
             self.speed -= player_accel * self.game.delta_time
+            self.engine_sound.set_volume(abs(self.speed)/5)
+            if self.engine_sound.get_num_channels() == 0:                
+                self.engine_sound.play(-1)
         else: #No inputs, begin decelerating
             if not self.stopped:
                 if abs(self.speed) > accelsens:
                     self.speed *= 1 - (player_deceleration * self.game.delta_time)
+                    self.engine_sound.set_volume(abs(self.speed)/5)
                 else:
                     self.stopped = True
                     self.speed = 0
+                    self.engine_sound.stop()
                     self.deflectionSpeed = 0
 
         if keys[self.inputs[2]]: #Turning
@@ -68,6 +84,13 @@ class Player(pg.sprite.Sprite):
         if keys[self.inputs[5]]:
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
+
+        if keys[self.inputs[5]] or keys[self.inputs[4]]:
+            if self.turret_rot_sound.get_num_channels() == 0:
+                self.turret_rot_sound.play(-1)
+        else:
+            self.turret_rot_sound.stop()
+
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
@@ -165,6 +188,9 @@ class Player(pg.sprite.Sprite):
                 pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
                 pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                 pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
+
+                if self.wall_thud_sound.get_num_channels() == 0:
+                    self.wall_thud_sound.play()
 
                 return True, collision
 
