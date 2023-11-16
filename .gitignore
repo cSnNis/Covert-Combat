@@ -5,4 +5,4 @@ poetry.lock
 pyproject.toml
 .breakpoints
 .pythonlibs
-.DC_Store
+.DS_Store
