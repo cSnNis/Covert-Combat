@@ -1,6 +1,7 @@
 from settings import *
 import pygame as pg
 import math
+from NPC import *
 from main import *
 import random
 
