@@ -59,7 +59,7 @@ class Game:
         if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
           return
   
-  def new_game(self): #The actual game.
+  def new_game(self): #Setting up the actual game.
 
     #Creating the map
     self.map = Map(self)
@@ -71,8 +71,8 @@ class Game:
     self.player_group = pg.sprite.Group() 
     self.NPC_group = pg.sprite.Group()
       #Spawning in the two players
-    self.p1 = Player(self, p1Inputs)
-    self.p2 = Player(self, p2Inputs)
+    self.p1 = Player(self, player_pos, 1, p1Inputs)
+    self.p2 = Player(self, player_pos, 0, p2Inputs)
       #Spawning in the NPCs
     for i in range(5):
       NPC(self, (i,i), i)
