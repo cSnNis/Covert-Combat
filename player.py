@@ -92,7 +92,10 @@ class Player(BaseTank):
 
     # Override of the basetank method, which updates the shells also.
     def update(self):
+        self.get_movement() #Get any player inputs, and apply them to movement variables.
+
         super().update()
+
         self.shell_group.update()
 
     # Override of the BaseTank method, which also draws the shells.
@@ -101,18 +104,6 @@ class Player(BaseTank):
 
         self.shell_group.draw(self.game.screen)
 
-    # Property to get the player's position
-    @property
-    def pos(self):
-        return self.x, self.y
-
-    # Property to get the player's position as integers
-    @property
-    def map_pos(self):
-        return int(self.x), int(self.y)
-    @property
-    def display_pos(self):
-        return self.xDisplay, self.yDisplay
 
 #Bullet/Shell Class
 class Shell(pg.sprite.Sprite):

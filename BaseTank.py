@@ -146,12 +146,9 @@ class BaseTank(pg.sprite.Sprite):
 
     # Method to update the tank's state
     def update(self):
-        self.get_movement() #Get player inputs
-
-        if not self.stopped: 
-            self.apply_movement() #Apply the movement
-
-        self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
+        if not self.stopped:
+            self.apply_movement() #Apply any movement to the objects x and y
+            self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position to new x and y
 
     # Method to draw the tankbody and turret, correctly rotated. Also updates the mask for collisions.
     def draw(self):
@@ -182,6 +179,7 @@ class BaseTank(pg.sprite.Sprite):
     @property
     def map_pos(self):
         return int(self.x), int(self.y)
+    
     @property
     def display_pos(self):
         return self.xDisplay, self.yDisplay
