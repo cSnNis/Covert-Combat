@@ -279,7 +279,7 @@ class Shell(pg.sprite.Sprite):
         super().__init__()
         self.game = game
         self.angle = player.turret_angle
-        self.image = pg.transform.scale_by(pg.image.load('Shell.png').convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
+        self.image = pg.transform.scale_by(pg.image.load(shell_sprite_path).convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
         # self.image.fill('yellow') #Yellow '''yellow'''
         self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.mask = pg.mask.from_surface(self.image)

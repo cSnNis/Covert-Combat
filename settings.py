@@ -45,6 +45,9 @@ tankSpriteScalingFactor = 1
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
 
+    #Shooting Settings
+shell_sprite_path = 'images/tank/Shell.png'
+
     #Player inputs, as tuples
     #The order is (forwardKey, backwardKey, leftKey, rightKey, turretLeftKey, turretRightKey)
 p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_q, pg.K_e)
