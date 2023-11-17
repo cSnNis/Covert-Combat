@@ -48,7 +48,7 @@ p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_q, pg.K_e)
 p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH)
 
 #Tile Settings
-tile_sprite_path = 'download (6).jpg'
+tile_sprite_path = 'wall image.jpg'
 
 
 
