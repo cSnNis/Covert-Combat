@@ -79,7 +79,7 @@ class Game:
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
-    mixer.music.load('BattleMusic.mp3')
+    mixer.music.load(bg_music_path)
     mixer.music.set_volume(.25)
 
   def update(self):
