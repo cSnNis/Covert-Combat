@@ -10,8 +10,12 @@ logo_image_path = "MenuResources/CovertCombatLogo.png"
 start_instructions = ["You and the other player control two tanks amongst a sea of tanks.",
                        "It is your job to hunt and kill the other player, without being killed.",
                        "Press SPACE to start, or ESC to quit."]
-start_music_path = 'BF1942 Music/05 - Theme 2.mp3'
+start_music_path = 'TankMusicSounds/05 - Theme 2.mp3'
 start_font_path = 'MenuResources/Capsmall.ttf'
+
+#Background music settings
+bg_music_volume = .25
+bg_music_path = 'TankMusicSounds\BattleMusic.mp3'
 
 #Tank Settings
     #Starting position values
@@ -45,6 +49,13 @@ turret_rot_speed = 2
     #The order is (forwardKey, backwardKey, leftKey, rightKey, turretLeftKey, turretRightKey)
 p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_q, pg.K_e)
 p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH)
+
+    #Tank Sounds
+turret_rot_volume = .2
+turret_rot_sound_path = 'TankMusicSounds\TurretRotate.mp3'
+wall_thud_volume = .75
+wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
+engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
 
 #Tile Settings
 tile_sprite_path = 'wall image.jpg'

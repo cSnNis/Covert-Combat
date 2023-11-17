@@ -39,11 +39,11 @@ class Player(pg.sprite.Sprite):
         self.stopped = True
         self.turretMovement = False
 
-        self.turret_rot_sound = pg.mixer.Sound('TurretRotate.mp3')
-        self.turret_rot_sound.set_volume(.2)
-        self.wall_thud_sound = pg.mixer.Sound('WallThud.mp3')
-        self.wall_thud_sound.set_volume(.75)
-        self.engine_sound = pg.mixer.Sound('EngineSound.mp3')
+        self.turret_rot_sound = pg.mixer.Sound(turret_rot_sound_path)
+        self.turret_rot_sound.set_volume(turret_rot_volume)
+        self.wall_thud_sound = pg.mixer.Sound(wall_thud_sound_path)
+        self.wall_thud_sound.set_volume(wall_thud_volume)
+        self.engine_sound = pg.mixer.Sound(engine_sound_path)
 
 
     def get_movement(self): #Get movement from the player.
