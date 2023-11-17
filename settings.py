@@ -37,8 +37,8 @@ minimumBounceSpeed = 1 #The minimum velocity of bounce from a collision. This is
 bounceDeceleration = 1 #The rate at which the bounce loses velocity.
 
     #Tank Sprites
-tank_sprite_path = 'TankBody.png'
-turret_sprite_path = 'Turret.png'
+tank_sprite_path = 'images/tank/TankBody.png'
+turret_sprite_path = 'images/tank/Turret.png'
 tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
 
@@ -58,7 +58,7 @@ wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
 engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
 
 #Tile Settings
-tile_sprite_path = 'wall image.jpg'
+tile_sprite_path = 'images/obstacles/wall image.jpg'
 
 
 
