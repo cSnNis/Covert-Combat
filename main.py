@@ -20,7 +20,7 @@ class Game:
 
     self.bg_music = pg.mixer.music
     self.soundMixer = pg.mixer
-    self.bg_image = pg.transform.scale(pg.image.load('sand.png'), res)
+    self.bg_image = pg.transform.scale(pg.image.load('images/obstacles/sand.png'), res)
     self.bg_rect = self.bg_image.get_rect(topleft = (0,0))
 
   def start_menu(self): #Displaying the start menu. It acts as it's own gameloop, so Game.new_game() is not called until it breaks.
