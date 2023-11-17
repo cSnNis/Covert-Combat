@@ -5,13 +5,13 @@ res = WIDTH,HEIGHT = 800,450
 fps = 60 
 
 #Start Menu settings
-splash_image_path = "CovertCombatSplashArt.png"
-logo_image_path = "CovertCombatLogo.png"
+splash_image_path = "MenuResources/CovertCombatSplashArt.png"
+logo_image_path = "MenuResources/CovertCombatLogo.png"
 start_instructions = ["You and the other player control two tanks amongst a sea of tanks.",
                        "It is your job to hunt and kill the other player, without being killed.",
                        "Press SPACE to start, or ESC to quit."]
 start_music_path = 'BF1942 Music/05 - Theme 2.mp3'
-start_font_path = 'Capsmall.ttf'
+start_font_path = 'MenuResources/Capsmall.ttf'
 
 #Tank Settings
     #Starting position values
@@ -32,7 +32,6 @@ bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with
 minimumBounceSpeed = 1 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
 bounceDeceleration = 1 #The rate at which the bounce loses velocity.
 
-    
     #Tank Sprites
 tank_sprite_path = 'TankBody.png'
 turret_sprite_path = 'Turret.png'
