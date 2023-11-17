@@ -315,29 +315,4 @@ class Shell(pg.sprite.Sprite):
 
                 return True, collision, (x,y)
             return False, None, (0,0) #If there are no objects colliding, then return False also.
-            
-
-
-NPC = pg.sprite.Group()
-
-class NPC(Player):
-    def __init__(self):
-        super().__init__()
-        self.x = random.randint(0, screen_width)
-        self.y = random.randint(0,screen_height)
-        self.rect = self.rect.inflate(5,5)
-
-    def update(self):
-        pass
-
-    def spawn(self): #This does not spawn the tanks, it allows the tanks to appear if they are in a good position
-         #self.collidables, returns the name of the collided object and it's point in display space.
-        for group in self.collidables: 
-            collisions = pg.sprite.spritecollideany(self, group, False)
-            if collisions:  
-                if len(NPC) >= 3:
-                    return None #something must be returned or it will cause an error down the line
-            else: 
-                if not collisions: #no collisions detected, tank is clear to spawn
-                    NPC.add(self)
 
