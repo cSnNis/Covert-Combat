@@ -5,13 +5,17 @@ res = WIDTH,HEIGHT = 800,450
 fps = 60 
 
 #Start Menu settings
-splash_image_path = "CovertCombatSplashArt.png"
-logo_image_path = "CovertCombatLogo.png"
+splash_image_path = "MenuResources/CovertCombatSplashArt.png"
+logo_image_path = "MenuResources/CovertCombatLogo.png"
 start_instructions = ["You and the other player control two tanks amongst a sea of tanks.",
                        "It is your job to hunt and kill the other player, without being killed.",
                        "Press SPACE to start, or ESC to quit."]
-start_music_path = 'BF1942 Music/05 - Theme 2.mp3'
-start_font_path = 'Capsmall.ttf'
+start_music_path = 'TankMusicSounds/05 - Theme 2.mp3'
+start_font_path = 'MenuResources/Capsmall.ttf'
+
+#Background music settings
+bg_music_volume = .25
+bg_music_path = 'TankMusicSounds\BattleMusic.mp3'
 
 #Tank Settings
     #Starting position values
@@ -32,23 +36,32 @@ bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with
 minimumBounceSpeed = 1 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
 bounceDeceleration = 1 #The rate at which the bounce loses velocity.
 
-    
     #Tank Sprites
-tank_sprite_path = 'TankBody.png'
-turret_sprite_path = 'Turret.png'
+tank_sprite_path = 'images/tank/TankBody.png'
+turret_sprite_path = 'images/tank/Turret.png'
 tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
 
+    #Shooting Settings
+shell_sprite_path = 'images/tank/Shell.png'
+
     #Player inputs, as tuples
     #The order is (forwardKey, backwardKey, leftKey, rightKey, turretLeftKey, turretRightKey)
 p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_q, pg.K_e)
 p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH)
 
+    #Tank Sounds
+turret_rot_volume = .2
+turret_rot_sound_path = 'TankMusicSounds\TurretRotate.mp3'
+wall_thud_volume = .75
+wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
+engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
+
 #Tile Settings
-tile_sprite_path = 'download (6).jpg'
+tile_sprite_path = 'images/obstacles/wall image.jpg'
 
 
 

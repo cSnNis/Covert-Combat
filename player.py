@@ -39,11 +39,11 @@ class Player(pg.sprite.Sprite):
         self.stopped = True
         self.turretMovement = False
 
-        self.turret_rot_sound = pg.mixer.Sound('TurretRotate.mp3')
-        self.turret_rot_sound.set_volume(.2)
-        self.wall_thud_sound = pg.mixer.Sound('WallThud.mp3')
-        self.wall_thud_sound.set_volume(.75)
-        self.engine_sound = pg.mixer.Sound('EngineSound.mp3')
+        self.turret_rot_sound = pg.mixer.Sound(turret_rot_sound_path)
+        self.turret_rot_sound.set_volume(turret_rot_volume)
+        self.wall_thud_sound = pg.mixer.Sound(wall_thud_sound_path)
+        self.wall_thud_sound.set_volume(wall_thud_volume)
+        self.engine_sound = pg.mixer.Sound(engine_sound_path)
 
 
     def get_movement(self): #Get movement from the player.
@@ -74,6 +74,11 @@ class Player(pg.sprite.Sprite):
                     self.speed = 0
                     self.engine_sound.stop()
                     self.deflectionSpeed = 0
+
+        if keys == pg.K_SPACE:
+            shell = self.player.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
+            if shell: #if a shell was produced (there is either an shell object or None here)
+              self.shell_group.add(shell)
 
         if keys[self.inputs[2]]: #Turning
             self.stopped = False
@@ -254,7 +259,7 @@ class Player(pg.sprite.Sprite):
         self.game.screen.blit(rotated_turret, turret_rect)
 
         pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-
+        #self.shell_group.draw(self.screen)
     # Property to get the player's position
     @property
     def pos(self):
@@ -274,7 +279,7 @@ class Shell(pg.sprite.Sprite):
         super().__init__()
         self.game = game
         self.angle = player.turret_angle
-        self.image = pg.transform.scale_by(pg.image.load('Shell.png').convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
+        self.image = pg.transform.scale_by(pg.image.load(shell_sprite_path).convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
         # self.image.fill('yellow') #Yellow '''yellow'''
         self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.mask = pg.mask.from_surface(self.image)
@@ -310,29 +315,4 @@ class Shell(pg.sprite.Sprite):
 
                 return True, collision, (x,y)
             return False, None, (0,0) #If there are no objects colliding, then return False also.
-            
-
-
-NPC = pg.sprite.Group()
-
-class NPC(Player):
-    def __init__(self):
-        super().__init__()
-        self.x = random.randint(0, screen_width)
-        self.y = random.randint(0,screen_height)
-        self.rect = self.rect.inflate(5,5)
-
-    def update(self):
-        pass
-
-    def spawn(self): #This does not spawn the tanks, it allows the tanks to appear if they are in a good position
-         #self.collidables, returns the name of the collided object and it's point in display space.
-        for group in self.collidables: 
-            collisions = pg.sprite.spritecollideany(self, group, False)
-            if collisions:  
-                if len(NPC) >= 3:
-                    return None #something must be returned or it will cause an error down the line
-            else: 
-                if not collisions: #no collisions detected, tank is clear to spawn
-                    NPC.add(self)
 
