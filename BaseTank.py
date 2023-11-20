@@ -7,6 +7,7 @@ class BaseTank(pg.sprite.Sprite):
     def __init__(self, game, spriteGroup, startPosition, startAngle):
         # Initialize the tank's attributes
         pg.sprite.Sprite.__init__(self) #Required of all pg.sprite objects
+        self.add(spriteGroup)
         self.game = game
         self.x, self.y = startPosition  # Initial tank position
         self.angle =  startAngle # Initial tank angle

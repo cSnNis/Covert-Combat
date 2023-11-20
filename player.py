@@ -11,7 +11,6 @@ class Player(BaseTank):
 
         #Initialialize tank properties.
         super().__init__(game, game.player_group, startPosition, startAngle)
-        self.add(game.player_group)
 
         self.inputs = inputTuple
 
@@ -126,7 +125,7 @@ class Shell(pg.sprite.Sprite):
         self.checkCollision() #checks to see if hit something afer moving
         
     def checkCollision(self): #Detects for pixel-based collisions between this sprite and anything in group self.collidables, returns the name of the collided object and it's point in display space.
-        for group in self.collidables: 
+        for group in self.collidables:
             collisions = pg.sprite.spritecollide(self, group, False)
             if len(collisions) > 0: #If there exists a collision, 
                 collision = collisions[0] #Only calculate the first object of this group.
