@@ -49,9 +49,9 @@ turret_rot_speed = 2
 shell_sprite_path = 'images/tank/Shell.png'
 
     #Player inputs, as tuples
-    #The order is (forwardKey, backwardKey, leftKey, rightKey, turretLeftKey, turretRightKey)
-p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_q, pg.K_e)
-p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH)
+    #The order is (forwardKey, backwardKey, leftKey, rightKey, turretLeftKey, turretRightKey, fireButton)
+p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_c, pg.K_v, pg.K_LSHIFT)
+p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH, pg.K_RSHIFT)
 
     #Tank Sounds
 turret_rot_volume = .2

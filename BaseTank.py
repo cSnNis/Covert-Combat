@@ -7,6 +7,7 @@ class BaseTank(pg.sprite.Sprite):
     def __init__(self, game, spriteGroup, startPosition, startAngle):
         # Initialize the tank's attributes
         pg.sprite.Sprite.__init__(self) #Required of all pg.sprite objects
+        self.add(spriteGroup)
         self.game = game
         self.x, self.y = startPosition  # Initial tank position
         self.angle =  startAngle # Initial tank angle
@@ -70,14 +71,22 @@ class BaseTank(pg.sprite.Sprite):
     def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
         for group in self.collidables: 
             collisions = pg.sprite.spritecollide(self, group, False)
-            if not (len(collisions) > 0): #If there are no objects colliding, 
-                return False, None #Return false
+            if len(collisions) == 0: #If there are no objects colliding, 
+                continue
             else: #Otherwise, do all this calculation stuff.
                 collision = collisions[0] #Only calculate the first, so far.
+
+                if id(collision) == id(self): #The tank shouldn't calculate collisions with itself.
+                    if len(collisions) > 1:
+                        collision = collisions[1]
+                    else:
+                        continue
+
+                pg.draw.rect(self.game.screen, 'blue', collision.rect, 3)
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                 if maskCollisionPoint == None:
-                    return False, None #If collide_mask returns None, then there is no collision to calculate.
+                    continue #If collide_mask returns None, then there is no collision to calculate.
 
                 self.game.screen.set_at(maskCollisionPoint, 'blue')
                 self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
@@ -139,7 +148,7 @@ class BaseTank(pg.sprite.Sprite):
                     self.wall_thud_sound.play()
 
                 return True, collision
-            return False, None #If there are no objects colliding, then return False also.
+        return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return(x,y) not in self.game.map.world_map
