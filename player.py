@@ -109,6 +109,7 @@ class Shell(pg.sprite.Sprite):
     def __init__(self, game, x, y, player):
         super().__init__()
         self.game = game
+        self.player = player
         self.angle = player.turret_angle
         self.image = pg.transform.scale_by(pg.image.load(shell_sprite_path).convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
         self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
@@ -129,12 +130,19 @@ class Shell(pg.sprite.Sprite):
             collisions = pg.sprite.spritecollide(self, group, False)
             if len(collisions) > 0: #If there exists a collision, 
                 collision = collisions[0] #Only calculate the first object of this group.
+
+                if id(collision) == id(self): #The tank shouldn't calculate collisions with itself.
+                    if len(collisions) > 1:
+                        collision = collisions[1]
+                    else:
+                        continue
+
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                 print("COLLIDED WITH " + str(collision))
                 self.kill()
 
                 if maskCollisionPoint == None:
-                    return False, None, (0,0) #If collide_mask returns None, then there is no collision to calculate.
+                    continue #If collide_mask returns None, then there is no collision to calculate.
 
                 #Find that intersecting point in world game space.
                 x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
@@ -143,5 +151,5 @@ class Shell(pg.sprite.Sprite):
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
                 return True, collision, (x,y)
-            return False, None, (0,0) #If there are no objects colliding, then return False also.
+        return False, None, (0,0) #If there are no objects colliding, then return False also.
 
