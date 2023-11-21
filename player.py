@@ -70,7 +70,7 @@ class Player(BaseTank):
             self.turret_angle %= math.tau 
         
         self.CooldownTimer += self.game.delta_time
-        if keys[pg.K_SPACE]:
+        if keys[self.inputs[6]]:
             if self.CooldownTimer > .2:
                 self.CooldownTimer = 0
                 self.shoot()
@@ -131,18 +131,19 @@ class Shell(pg.sprite.Sprite):
             if len(collisions) > 0: #If there exists a collision, 
                 collision = collisions[0] #Only calculate the first object of this group.
 
-                if id(collision) == id(self): #The tank shouldn't calculate collisions with itself.
+                if id(collision) == id(self.player): #The tank shouldn't calculate collisions with itself.
                     if len(collisions) > 1:
                         collision = collisions[1]
                     else:
                         continue
 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
-                print("COLLIDED WITH " + str(collision))
-                self.kill()
 
                 if maskCollisionPoint == None:
                     continue #If collide_mask returns None, then there is no collision to calculate.
+
+                print("COLLIDED WITH " + str(collision))
+                self.kill()
 
                 #Find that intersecting point in world game space.
                 x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
