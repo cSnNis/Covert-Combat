@@ -86,7 +86,7 @@ class BaseTank(pg.sprite.Sprite):
                 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                 if maskCollisionPoint == None:
-                    return False, None #If collide_mask returns None, then there is no collision to calculate.
+                    continue #If collide_mask returns None, then there is no collision to calculate.
 
                 self.game.screen.set_at(maskCollisionPoint, 'blue')
                 self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
