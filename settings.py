@@ -15,7 +15,7 @@ start_font_path = 'MenuResources/Capsmall.ttf'
 
 #Background music settings
 bg_music_volume = .25
-bg_music_path = 'TankMusicSounds\BattleMusic.mp3'
+bg_music_path = 'TankMusicSounds/BattleMusic.mp3'
 
 #Tank Settings
     #Starting position values
@@ -55,10 +55,10 @@ p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH)
 
     #Tank Sounds
 turret_rot_volume = .2
-turret_rot_sound_path = 'TankMusicSounds\TurretRotate.mp3'
+turret_rot_sound_path = 'TankMusicSounds/TurretRotate.mp3'
 wall_thud_volume = .75
-wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
-engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
+wall_thud_sound_path = 'TankMusicSounds/WallThud.mp3'
+engine_sound_path = 'TankMusicSounds/EngineSound.mp3'
 
 #Tile Settings
 tile_sprite_path = 'images/obstacles/wall image.jpg'

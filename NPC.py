@@ -5,6 +5,12 @@ from main import *
 from BaseTank import BaseTank
 import random
 
+
+#Destroyed Images
+GD = 'images/obstacles/Green_Destroyed.jpg'
+RD = 'images/obstacles/Red_Destroyed.jpg'
+BD = 'images/obstacles/Blue_Destroyed.jpg'
+
 # Define the Player class for the player character
 class NPC(BaseTank):
     def __init__(self, game, startPosition, startAngle):
@@ -21,3 +27,8 @@ class NPC(BaseTank):
         self.get_movement()
         
         super().update()
+
+    def destroy(self):
+        self.status = "Dead" #We don't have an obstacle class so I decided to just leave everything on here for now
+        self.image.load(GD)
+        
