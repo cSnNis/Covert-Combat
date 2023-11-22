@@ -47,6 +47,7 @@ turret_rot_speed = 2
 
     #Shooting Settings
 shell_sprite_path = 'images/tank/Shell.png'
+shell_sprite_dimensions = (50,50)
 
     #Player inputs, as tuples
     #The order is (forwardKey, backwardKey, leftKey, rightKey, turretLeftKey, turretRightKey, fireButton)

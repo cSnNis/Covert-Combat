@@ -86,7 +86,7 @@ class Player(BaseTank):
 
     def shoot(self): 
         if len(self.shell_group) <= 5: #If there are more than 6 shells on screen, don't create another
-            Shell(self.game, self.rect.centerx, self.rect.centery, self).add(self.shell_group) #Makes a shell that shoots from center of the top side
+            Shell(self.game, (self.xDisplay + (math.cos(self.turret_angle) * 80 * RESMULTX)), (self.yDisplay + (math.sin(-self.turret_angle) * 80 * RESMULTY)), self).add(self.shell_group) #Makes a shell that shoots from center of the top side
             print('Bullet shot, there are ' + str(len(self.shell_group)))
 
     # Override of the basetank method, which updates the shells also.
@@ -111,7 +111,7 @@ class Shell(pg.sprite.Sprite):
         self.game = game
         self.player = player
         self.angle = player.turret_angle
-        self.image = pg.transform.scale_by(pg.image.load(shell_sprite_path).convert_alpha(),.01)  #create an image object (essentially a surface), rotated as the turret is.
+        self.image = pg.image.load(shell_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (shell_sprite_dimensions[0] * RESMULTX, shell_sprite_dimensions[1] * RESMULTY))  #create an image object (essentially a surface), rotated as the turret is.
         self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
