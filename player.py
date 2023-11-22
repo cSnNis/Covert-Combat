@@ -94,7 +94,8 @@ class Player(BaseTank):
         self.status = "Dead" #We don't have an obstacle class so I decided to just leave everything on here for now
         '''My thinking was that if we need to prevent movement on any instance, we just have an if statement that bypasses key inputs if its status is "dead"'''
         print(self, 'has died.')
-        self.image = pg.image.load(GD_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))
+        self.image = pg.image.load(GD_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor)
+        #Place additional logic for losing down below
 
     # Override of the basetank method, which updates the shells also.
     def update(self):
@@ -144,7 +145,7 @@ class Shell(pg.sprite.Sprite):
                     else:
                         continue
                     
-                if isinstance(collision, NPC): #if the collision is with an NPC, call that NPC's destroy method
+                if isinstance(collision, NPC) or isinstance(collision, Player): #if the collision is with an NPC, call that NPC's destroy method
                     collision.destroy()
 
      
