@@ -6,10 +6,6 @@ from BaseTank import BaseTank
 import random
 
 
-#Destroyed Images
-GD = 'images/obstacles/Green_Destroyed.jpg'
-RD = 'images/obstacles/Red_Destroyed.jpg'
-BD = 'images/obstacles/Blue_Destroyed.jpg'
 
 # Define the Player class for the player character
 class NPC(BaseTank):
@@ -30,5 +26,6 @@ class NPC(BaseTank):
 
     def destroy(self):
         self.status = "Dead" #We don't have an obstacle class so I decided to just leave everything on here for now
-        self.image.load(GD)
+        print(self, 'has died.')
+        self.image = pg.image.load(GD_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))
         

@@ -3,6 +3,7 @@ import pygame as pg
 import math
 from main import *
 from BaseTank import BaseTank
+from NPC import NPC
 import random
 
 # Define the Player class for the player character
@@ -89,6 +90,12 @@ class Player(BaseTank):
             Shell(self.game, self.rect.centerx, self.rect.centery, self).add(self.shell_group) #Makes a shell that shoots from center of the top side
             print('Bullet shot, there are ' + str(len(self.shell_group)))
 
+    def destroy(self):
+        self.status = "Dead" #We don't have an obstacle class so I decided to just leave everything on here for now
+        '''My thinking was that if we need to prevent movement on any instance, we just have an if statement that bypasses key inputs if its status is "dead"'''
+        print(self, 'has died.')
+        self.image = pg.image.load(GD_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))
+
     # Override of the basetank method, which updates the shells also.
     def update(self):
         self.get_movement() #Get any player inputs, and apply them to movement variables.
@@ -136,6 +143,11 @@ class Shell(pg.sprite.Sprite):
                         collision = collisions[1]
                     else:
                         continue
+                    
+                if isinstance(collision, NPC): #if the collision is with an NPC, call that NPC's destroy method
+                    collision.destroy()
+
+     
 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
 

@@ -42,6 +42,11 @@ turret_sprite_path = 'images/tank/Turret.png'
 tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
 
+    #Destroyed Images
+GD_path = 'images/obstacles/G_Destroyed.png'
+RD_path = 'images/obstacles/R_Destroyed.png'
+BD_path = 'images/obstacles/B_Destroyed.png'
+
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
 
