@@ -16,9 +16,9 @@ mini_map = [
 ]
 
 class Wall(pg.sprite.Sprite):
-    def __init__(self, x, y, image_path):
+    def __init__(self, x, y, image_path, dimensions):
         super().__init__()
-        self.image = pg.image.load(image_path).convert_alpha()
+        self.image = pg.image.load(image_path).convert_alpha(); self.image = pg.transform.scale(self.image, (dimensions[0] * RESMULTX, dimensions[1] * RESMULTY))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x * COORDINATEMULTX, y * COORDINATEMULTY)
         self.mask = pg.mask.from_surface(self.image)
@@ -37,11 +37,11 @@ class Map:
                 if value:
                     self.world_map[(i, j)] = value
                     if value == 1:
-                        wall = Wall(i, j, tile_sprite_path)
+                        wall = Wall(i, j, tile_sprite_path, (100, 100))
                         self.walls.add(wall)
                     elif value == 2:
                         obstacle2_image = tank_sprite_path  # Replace with the actual path
-                        obstacle2 = Wall(i, j, obstacle2_image)
+                        obstacle2 = Wall(i, j, obstacle2_image, (50,100))
                         self.walls.add(obstacle2)
 
     def draw(self):
