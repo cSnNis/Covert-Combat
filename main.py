@@ -58,7 +58,10 @@ class Game:
           sys.exit()
         if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
           return
-  
+
+  def victory_screen(self):
+    victory_text = pg.font.Font(start_font_path,45)
+
   def new_game(self): #Setting up the actual game.
 
     #Creating the map
@@ -120,15 +123,17 @@ class Game:
         else:
           mixer.music.stop()
 
-    
   def run(self):
-    self.start_menu()
-    self.new_game()
+    while True: #Keep looping until the game quits.
+      self.start_menu()
+      self.new_game()
 
-    while True:
-      self.check_events()
-      self.update()
-      self.draw()
+      while len(self.player_group) > 1: #While there exist two players
+        self.check_events()
+        self.update()
+        self.draw()
+
+      self.victory_screen()
   
   
   
