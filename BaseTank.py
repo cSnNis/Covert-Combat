@@ -19,7 +19,7 @@ class BaseTank(pg.sprite.Sprite):
         self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
         
         self.turret_angle = startAngle  # Initial turret angle
-        self.turret_image = pg.transform.scale_by(pg.image.load(turret_sprite_path).convert_alpha(), tank_scale)  # Load turret image
+        self.turret_image = pg.image.load(turret_sprite_path).convert_alpha(); self.turret_image = pg.transform.scale(self.turret_image, (self.turret_image.get_width() * RESMULTX * tankSpriteScalingFactor, self.turret_image.get_height() * RESMULTY * tankSpriteScalingFactor)) # Load turret image
         
         #Creating collision Variables
         self.collidables = [self.game.map.walls, game.player_group, game.NPC_group] #Anything that should be collided with should be in this group.
