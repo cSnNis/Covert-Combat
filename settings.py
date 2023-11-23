@@ -7,7 +7,7 @@ fps = 60
 #Start Menu settings
 splash_image_path = "MenuResources/CovertCombatSplashArt.png"
 logo_image_path = "MenuResources/CovertCombatLogo.png"
-start_instructions = ["You and the other player control two tanks amongst a sea of tanks.",
+start_instructions = ["You and the other player control two tanks hidden amongst a sea of tanks.",
                        "It is your job to hunt and kill the other player, without being killed.",
                        "Press SPACE to start, or ESC to quit."]
 start_music_path = 'TankMusicSounds/05 - Theme 2.mp3'
