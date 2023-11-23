@@ -131,7 +131,7 @@ class Shell(pg.sprite.Sprite):
             if len(collisions) > 0: #If there exists a collision, 
                 collision = collisions[0] #Only calculate the first object of this group.
 
-                if id(collision) == id(self.player): #The tank shouldn't calculate collisions with itself.
+                if id(collision) == id(self.player) or id(collisions) == id(self): #The tank shouldn't calculate collisions with itself.
                     if len(collisions) > 1:
                         collision = collisions[1]
                     else:
