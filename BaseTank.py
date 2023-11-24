@@ -10,7 +10,7 @@ class BaseTank(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self) #Required of all pg.sprite objects
         self.add(spriteGroup)
         self.game = game
-        self.x, self.y = startPosition[0] - .5, startPosition[1] - .5  # Initial tank position
+        self.x, self.y = startPosition[0] + .5, startPosition[1] + .5  # Initial tank position
         self.angle =  random.uniform(0, 2 * math.pi) # Initial tank angle
 
         #Loading in sprite images.
@@ -25,7 +25,7 @@ class BaseTank(pg.sprite.Sprite):
         #Creating collision Variables
         self.collidables = [self.game.map.walls, game.player_group, game.NPC_group] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
-        self.isColliding = (False, 0)
+        self.isColliding = (False, 0) #(Is There a Collision, Reference to Object of collision.)
         self.deflectionSpeed = 0
 
         #Creating movement variables
@@ -150,7 +150,7 @@ class BaseTank(pg.sprite.Sprite):
         return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
-        return(x,y) not in self.game.map.world_map
+        return ((x,y) not in self.game.map.world_map) and (0 < x < 16 and 0 < y < 9)
 
     # Method to update the tank's state
     def update(self):
