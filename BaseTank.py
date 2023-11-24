@@ -44,7 +44,6 @@ class BaseTank(pg.sprite.Sprite):
         y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
 
         #Check for collisions. If there exist collisions, (evident by deflectionSpeed being positive) then apply the calculated deflection velocity.
-        self.isColliding = self.checkCollision()
         if self.deflectionSpeed > 0:
             x_change += self.deflectionSpeed * math.cos(self.deflectionAngle) * self.game.delta_time
             y_change += self.deflectionSpeed * math.sin(-self.deflectionAngle) * self.game.delta_time
@@ -154,6 +153,8 @@ class BaseTank(pg.sprite.Sprite):
 
     # Method to update the tank's state
     def update(self):
+        self.isColliding = self.checkCollision()
+        
         if not self.stopped:
             self.apply_movement() #Apply any movement to the objects x and y
             self.rect.center = (self.xDisplay, self.yDisplay)  # Update sprite's position to new x and y
