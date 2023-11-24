@@ -76,7 +76,6 @@ class BaseTank(pg.sprite.Sprite):
                 continue
             else: #Otherwise, do all this calculation stuff.
                 for collision in collisions:
-
                     if id(collision) == id(self): #The tank shouldn't calculate collisions with itself. Move on to the next collision of this group.
                         continue
 
@@ -147,8 +146,7 @@ class BaseTank(pg.sprite.Sprite):
 
                     if self.wall_thud_sound.get_num_channels() == 0:
                         self.wall_thud_sound.play()
-
-                return True, collision
+                    return True, collision
         return False, None #If there are no objects colliding, then return False also.
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
