@@ -57,14 +57,11 @@ class NPC(BaseTank):
                 if abs(self.speed) < accelsens: #Once fully decelerated, change states.
                     self.stopped = True
                     self.engine_sound.stop()
-                    self.deflectionSpeed = 0
 
                     if self.speed > 0: #If the NPC was moving forward before decelerating,
                         self.movementState = backwardState #The NPC should now reverse
                     else:
                         self.movementState = forwardState #If not, then it was going backwards, and should then accelerate forward.
-                    
-                    self.changeDirection() #and also get a new direction
                     self.engine_sound.stop()
             case 3: #backward state
                 self.stopped = False
