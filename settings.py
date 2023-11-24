@@ -15,7 +15,10 @@ start_font_path = 'MenuResources/Capsmall.ttf'
 
 #Background music settings
 bg_music_volume = .25
-bg_music_path = 'TankMusicSounds\BattleMusic.mp3'
+bg_music_path = 'TankMusicSounds/BattleMusic.mp3'
+
+#Victory Menu Settings
+victory_music_path = 'TankMusicSounds/02 - Briefing.mp3'
 
 #Tank Settings
     #Starting position values
@@ -42,6 +45,11 @@ turret_sprite_path = 'images/tank/Turret.png'
 tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
 
+    #Destroyed Images
+GD_path = 'images/obstacles/G_Destroyed.png'
+RD_path = 'images/obstacles/R_Destroyed.png'
+BD_path = 'images/obstacles/B_Destroyed.png'
+
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
 
@@ -56,10 +64,10 @@ p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH, 
 
     #Tank Sounds
 turret_rot_volume = .2
-turret_rot_sound_path = 'TankMusicSounds\TurretRotate.mp3'
+turret_rot_sound_path = 'TankMusicSounds/TurretRotate.mp3'
 wall_thud_volume = .75
-wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
-engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
+wall_thud_sound_path = 'TankMusicSounds/WallThud.mp3'
+engine_sound_path = 'TankMusicSounds/EngineSound.mp3'
 
 #Tile Settings
 tile_sprite_path = 'images/obstacles/wall image.jpg'

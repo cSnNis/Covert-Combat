@@ -52,13 +52,44 @@ class Game:
     pg.display.flip()
 
     while True: #Wait until a key is pressed to exit. 
+      pg.display.set_caption(f'COVERT COMBAT {self.clock.get_fps() :.1f}')
       for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
           pg.quit()
           sys.exit()
         if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
           return
-  
+
+  def victory_screen(self):
+    #Play the victory music.
+    self.bg_music.load(victory_music_path)
+    self.bg_music.set_volume(.25)
+    self.bg_music.play()
+
+    #Determine who won.
+    if self.player_group.sprites()[0].inputs == p1Inputs: #If it's player 1;
+      winner = 'Player 1'
+      loser = 'Player 2'
+    else:
+      winner = 'Player 2'
+      loser = 'Player 1'
+    #Generate the appropriate victory text.
+    victory_text = pg.font.Font(start_font_path,45).render((winner + " found and destroyed " + loser + ". Press Space to Play Again."), None, 'white', 'black'); victory_text = pg.transform.scale(victory_text, (victory_text.get_width() * RESMULTX, victory_text.get_height() * RESMULTY))
+    victory_text_rect = victory_text.get_rect(center = (res[0] / 2, res[1] / 2))
+
+    #Display this text while waiting for a player to start a new game.
+    while True: #Wait until a key is pressed to exit. 
+      pg.display.set_caption(f'COVERT COMBAT {self.clock.get_fps() :.1f}')
+      self.draw()
+      self.screen.blit(victory_text, victory_text_rect)
+      pg.display.flip()
+      for event in pg.event.get():
+        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+          pg.quit()
+          sys.exit()
+        if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+          return
+
   def new_game(self): #Setting up the actual game.
 
     #Creating the map
@@ -131,15 +162,17 @@ class Game:
         else:
           mixer.music.stop()
 
-    
   def run(self):
     self.start_menu()
-    self.new_game()
+    while True: #Keep looping until the game quits.
+      self.new_game()
 
-    while True:
-      self.check_events()
-      self.update()
-      self.draw()
+      while len(self.player_group) > 1: #While there exist two players
+        self.check_events()
+        self.update()
+        self.draw()
+
+      self.victory_screen()
   
   
 if __name__ == '__main__':
