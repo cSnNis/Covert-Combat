@@ -157,6 +157,7 @@ class BaseTank(pg.sprite.Sprite):
         DeadTank(self.game, self.rect.center)
         print(str(self), 'has died.') #I'm leaving this here just in case, but in order for this to work properly, both the NPC and Player class need a __str__ method
         self.kill()
+        print(str(self.groups))
 
 
     # Method to update the tank's state
