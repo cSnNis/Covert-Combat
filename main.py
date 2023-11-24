@@ -71,11 +71,11 @@ class Game:
     self.player_group = pg.sprite.Group() 
     self.NPC_group = pg.sprite.Group()
       #Spawning in the two players
-    self.p1 = Player(self, player_pos, 1, p1Inputs)
-    self.p2 = Player(self, player_pos, 0, p2Inputs)
+    self.p1 = Player(self, player_pos, p1Inputs)
+    self.p2 = Player(self, player_pos, p2Inputs)
       #Spawning in the NPCs
     for i in range(5):
-      NPC(self, (i,i), i)
+      NPC(self, (i,i))
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 

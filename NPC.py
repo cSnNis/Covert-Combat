@@ -7,7 +7,7 @@ import random
 
 # Define the Player class for the player character
 class NPC(BaseTank):
-    def __init__(self, game, startPosition, startAngle):
+    def __init__(self, game, startPosition):
 
         #Initialialize tank properties.
         super().__init__(game, game.NPC_group, startPosition, startAngle)
