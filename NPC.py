@@ -10,10 +10,10 @@ import imageio.v3 as iio #ignore this
 
 # Define the NPC class for the for nonplable tanks
 class NPC(BaseTank):
-    def __init__(self, game, startPosition, startAngle):
+    def __init__(self, game, startPosition):
 
         #Initialialize tank properties.
-        super().__init__(game, game.player_group, startPosition, startAngle)
+        super().__init__(game, game.NPC_group, startPosition)
         self.add(game.NPC_group)
 
     def get_movement(self): #Generate movement for the NPC. So far, it does nothing.
