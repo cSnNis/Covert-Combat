@@ -95,8 +95,6 @@ class Game:
     #Creating the map
     self.map = Map(self)
 
-    self.shell_group = pg.sprite.Group()
-
     self.obs_group = pg.sprite.Group() #obstacles
 
     #Spawning in the tanks
@@ -144,8 +142,10 @@ class Game:
     self.screen.blit(self.bg_image, self.bg_rect)
     
     self.map.draw()
-    self.p1.draw()
-    self.p2.draw()
+
+    for player in self.player_group:
+      player.draw()
+
 
     if pg.key.get_pressed()[pg.K_1]:
       pg.draw.circle(self.screen, 'BLUE', self.p1.display_pos, int(player_intel_diameter*RESMULTX), width=int(player_intel_width*RESMULTX))
@@ -155,7 +155,6 @@ class Game:
     for NPC in self.NPC_group:
       NPC.draw()
     
-    self.shell_group.draw(self.screen)
     self.obs_group.draw(self.screen)
     self.debug.draw()
 
