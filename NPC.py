@@ -5,51 +5,75 @@ from main import *
 from BaseTank import BaseTank
 import random
 
+forwardState = 1
+decelerationState = 2
+backwardState = 3
+possibleStates = [forwardState, forwardState, decelerationState, backwardState]
+
 # Define the Player class for the player character
 class NPC(BaseTank):
     def __init__(self, game, startPosition):
 
         #Initialialize tank properties.
         super().__init__(game, game.NPC_group, startPosition)
+
+        #Pathfinding variables
         self.direction = 0 #The direction the NPC is currently aiming to go. It is picked by self.generateDirection
         self.decelerateFromCollision = False
         self.RotatePositive = False #Randomly set by generateDirection()
-        self.generateDirection()
+        self.movementState = 1
+        self.changeDirection()
 
-        print("My start position was",startPosition)
+        print("My start position was",startPosition, "in ", self.movementState)
 
         self.add(game.NPC_group)
 
-    def get_movement(self): #Generate movement for the NPC.
-        #Rotating the tank towards self.destination_real point.
-        if self.RotatePositive:
-            if self.angle > self.direction:
-                self.angle += player_rot_speed * self.game.delta_time
-        else:
-            if self.angle > self.direction:
-                self.angle -= player_rot_speed * self.game.delta_time
+    def get_movement(self): #Generate movement for the NPC, given it's angle, intended direction, and current state.
+        #Rotating the tank towards self.direction.
+        if not self.angle == self.direction:
+            if self.RotatePositive:
+                if self.angle > self.direction:
+                    self.angle += player_rot_speed * self.game.delta_time
+            else:
+                if self.angle > self.direction:
+                    self.angle -= player_rot_speed * self.game.delta_time
+
+
+        #Apply acceleration, depending on the current state.
+        match self.movementState:
+            case 1:# forward state
+                self.stopped = False
+                self.speed += player_accel * self.game.delta_time
+                self.engine_sound.set_volume(self.speed/5)
+                if self.engine_sound.get_num_channels() == 0:
+                    self.engine_sound.play(-1)
+            case 2: # Deceleration state. This is defaulted to when the NPC collides with something.
+                self.speed *= 1 - (player_deceleration * self.game.delta_time)
+
+                if abs(self.speed) < accelsens: #Once fully decelerated, change states.
+                    self.stopped = True
+                    self.engine_sound.stop()
+                    self.deflectionSpeed = 0
+
+                    if self.speed > 0: #If the NPC was moving forward before decelerating,
+                        self.movementState = backwardState #The NPC should reverse
+                    else:
+                        self.movementState = forwardState
+                    
+                    self.changeDirection() #and also get a new direction
+                    self.engine_sound.stop()
+            case 3: #backward state
+                self.stopped = False
+                self.speed -= player_accel * self.game.delta_time
+                self.engine_sound.set_volume(self.speed/5)
+                if self.engine_sound.get_num_channels() == 0:
+                    self.engine_sound.play(-1)
         
-
-        #Accelerating the NPC, or decelerating otherwise.
-        if not self.decelerateFromCollision: #Accelerating forward, as normal
-            self.stopped = False
-            self.speed += player_accel * self.game.delta_time
-            self.engine_sound.set_volume(self.speed/5)
-            if self.engine_sound.get_num_channels() == 0:
-                self.engine_sound.play(-1)
-        else: #We must've hit something, decelerate.
-            self.speed *= 1 - (player_deceleration * self.game.delta_time)
-            self.engine_sound.set_volume(abs(self.speed)/5)
-
-            if abs(self.speed) < accelsens:
-                self.stopped = True
-                self.decelerateFromCollision = False #Begin moving forward again.
-                self.engine_sound.stop()
-                self.deflectionSpeed = 0
+        self.engine_sound.set_volume(self.speed/5)
 
         #Random turret movement.
 
-    def generateDirection(self): #Generates a viable destination for the NPC.
+    def changeDirection(self): #Generates a viable destination for the NPC.
         x, y = self.map_pos
         indexX, indexY = self.map_pos[0] - 1, self.map_pos[1] - 1 #Refer to map.py for why there is an index coordinate and actual coordinate.
         mini_map = self.game.map.mini_map
@@ -99,15 +123,19 @@ class NPC(BaseTank):
         except(IndexError):
             print('My game-breaking position was ',x, y)
 
+    def changeMovementState(self):
+        self.movementState = random.choice(possibleStates)
+
     # Override of the BaseTank method. So far it does nothing, but any NPC specific logic can be written here.
     def update(self):
-        if self.isColliding[0]: #If there was a collision this frame, then begin decelerating and set a new course
+        if self.isColliding[0] and type(self.isColliding[1]) is not NPC: #If there was a collision this frame, then begin decelerating and set a new course
             pg.draw.rect(self.game.screen, 'green', self.rect)
-            #self.generateDirection()
-            self.direction = (self.direction + math.pi) % math.tau
-            self.decelerateFromCollision = True
-        elif random.random() < .01 : #Otherwise, 1 in 100 chance per frame of changing direction.
-            self.generateDirection()
+            self.movementState = decelerationState
+            self.changeDirection()
+        elif random.random() < .05: #If the NPC is not colliding, then there is a 1 in 20 chance per frame to change direction
+            self.changeDirection()
+        elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 10 chance for it to change movement state.
+            self.changeMovementState()
 
 
         self.get_movement()
