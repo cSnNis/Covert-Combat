@@ -1,16 +1,17 @@
 from settings import *
 import pygame as pg
 import math
+import random
 
 # Define the Player class for the player character
 class BaseTank(pg.sprite.Sprite):
-    def __init__(self, game, spriteGroup, startPosition, startAngle):
+    def __init__(self, game, spriteGroup, startPosition):
         # Initialize the tank's attributes
         pg.sprite.Sprite.__init__(self) #Required of all pg.sprite objects
         self.add(spriteGroup)
         self.game = game
         self.x, self.y = startPosition  # Initial tank position
-        self.angle =  startAngle # Initial tank angle
+        self.angle =  random.uniform(0, 2 * math.pi) # Initial tank angle
 
         #Loading in sprite images.
         self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
@@ -18,7 +19,7 @@ class BaseTank(pg.sprite.Sprite):
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
         self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
         
-        self.turret_angle = startAngle  # Initial turret angle
+        self.turret_angle = random.uniform(0, 2 * math.pi)  # Initial turret angle
         self.turret_image = pg.image.load(turret_sprite_path).convert_alpha(); self.turret_image = pg.transform.scale(self.turret_image, (self.turret_image.get_width() * RESMULTX * tankSpriteScalingFactor, self.turret_image.get_height() * RESMULTY * tankSpriteScalingFactor)) # Load turret image
         
         #Creating collision Variables

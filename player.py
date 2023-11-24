@@ -7,10 +7,10 @@ import random
 
 # Define the Player class for the player character
 class Player(BaseTank):
-    def __init__(self, game, startPosition, startAngle, inputTuple):
+    def __init__(self, game, startPosition, inputTuple):
 
         #Initialialize tank properties.
-        super().__init__(game, game.player_group, startPosition, startAngle)
+        super().__init__(game, game.player_group, startPosition)
 
         self.inputs = inputTuple
 
