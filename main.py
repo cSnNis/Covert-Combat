@@ -76,14 +76,15 @@ class Game:
     for y, row in enumerate(self.map.mini_map):
       for x, cell in enumerate(row):
         if self.map.mini_map[y][x] == False:
-          self.emptyCells.append((x + 1, y + 1,)) #You have to add one to the indexed values, as on display the shown cells start at (1,1) rather than (0,0). J and I are also flipped, as indexing the mini_map uses (y, x) which must be flipped back to (x, y) for the pygame coordinate system. It took me far too long to figure that out.
+          if  0 < x < 16 and 0 < y < 9: #For whatever reason, a bunch of negative numbers are being generated which is throwing this whole thing off. I'm just going to strong arm it.
+            self.emptyCells.append((x, y)) #You have to add one to the indexed values, as on display the shown cells start at (1,1) rather than (0,0). J and I are also flipped, as indexing the mini_map uses (y, x) which must be flipped back to (x, y) for the pygame coordinate system. It took me far too long to figure that out.
     random.shuffle(self.emptyCells) #Introduce randomness to spawning. Otherwise, they would spawn in order.
 
       #Spawning in the two players, using the newly found free spaces.
     self.p1 = Player(self, self.emptyCells.pop(0), p1Inputs)
     self.p2 = Player(self, self.emptyCells.pop(0), p2Inputs)
       #Spawning in the NPCs
-    for i in range(5):
+    for i in range(10):
       NPC(self, self.emptyCells.pop(0))
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
@@ -139,7 +140,6 @@ class Game:
       self.check_events()
       self.update()
       self.draw()
-  
   
   
 if __name__ == '__main__':
