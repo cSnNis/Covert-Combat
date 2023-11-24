@@ -25,6 +25,8 @@ class BaseTank(pg.sprite.Sprite):
         self.turret_angle = random.uniform(0, 2 * math.pi)  # Initial turret angle
         self.turret_image = ImageSet[1]
 
+        self.destroyed_image = ImageSet[2] #This must be saved.
+
         #Creating collision Variables
         self.collidables = [self.game.map.walls, game.player_group, game.NPC_group, game.obs_group] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
@@ -156,7 +158,7 @@ class BaseTank(pg.sprite.Sprite):
 
     
     def destroy(self):
-        DeadTank(self.game, self.rect.center)
+        DeadTank(self.game, self.rect.center, self.angle, self.destroyed_image)
         print(str(self), 'has died.') #I'm leaving this here just in case, but in order for this to work properly, both the NPC and Player class need a __str__ method
         self.kill()
 
