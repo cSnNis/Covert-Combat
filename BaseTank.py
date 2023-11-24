@@ -10,7 +10,7 @@ class BaseTank(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self) #Required of all pg.sprite objects
         self.add(spriteGroup)
         self.game = game
-        self.x, self.y = startPosition  # Initial tank position
+        self.x, self.y = startPosition[0] - .5, startPosition[1] - .5  # Initial tank position
         self.angle =  random.uniform(0, 2 * math.pi) # Initial tank angle
 
         #Loading in sprite images.
@@ -98,6 +98,9 @@ class BaseTank(pg.sprite.Sprite):
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
                 #Getting the angle of the collision point to the center of the tank.
+
+                if (self.xDisplay - x) == 0: #If the collision point is at the center of the tank, then don't calculate the rest. It's useless and will create an error.
+                    continue
                 
                 collision_point_angle = math.atan((self.yDisplay - y) / (self.xDisplay - x))
                 pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
@@ -158,7 +161,7 @@ class BaseTank(pg.sprite.Sprite):
     def update(self):
         if not self.stopped:
             self.apply_movement() #Apply any movement to the objects x and y
-            self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position to new x and y
+            self.rect.center = (self.xDisplay, self.yDisplay)  # Update sprite's position to new x and y
 
     # Method to draw the tankbody and turret, correctly rotated. Also updates the mask for collisions.
     def draw(self):
