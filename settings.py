@@ -50,6 +50,7 @@ tankSpriteScalingFactor = 1
 GD_path = 'images/obstacles/G_Destroyed.png'
 RD_path = 'images/obstacles/R_Destroyed.png'
 BD_path = 'images/obstacles/B_Destroyed.png'
+Explosion_path = 'images/tank/Explosion.gif'
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2

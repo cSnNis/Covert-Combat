@@ -1,5 +1,6 @@
 from settings import *
 import pygame as pg
+from DeadTank import DeadTank
 import math
 import random
 
@@ -23,7 +24,7 @@ class BaseTank(pg.sprite.Sprite):
         self.turret_image = pg.image.load(turret_sprite_path).convert_alpha(); self.turret_image = pg.transform.scale(self.turret_image, (self.turret_image.get_width() * RESMULTX * tankSpriteScalingFactor, self.turret_image.get_height() * RESMULTY * tankSpriteScalingFactor)) # Load turret image
         
         #Creating collision Variables
-        self.collidables = [self.game.map.walls, game.player_group, game.NPC_group] #Anything that should be collided with should be in this group.
+        self.collidables = [self.game.map.walls, game.player_group, game.NPC_group, game.obs_group] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
         self.isColliding = (False, 0) #(Is There a Collision, Reference to Object of collision.)
         self.deflectionSpeed = 0
@@ -150,6 +151,13 @@ class BaseTank(pg.sprite.Sprite):
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return ((x,y) not in self.game.map.world_map) and (0 < x < 16 and 0 < y < 9)
+
+    
+    def destroy(self):
+        DeadTank(self.game, self.rect.center)
+        print(str(self), 'has died.') #I'm leaving this here just in case, but in order for this to work properly, both the NPC and Player class need a __str__ method
+        self.kill()
+
 
     # Method to update the tank's state
     def update(self):

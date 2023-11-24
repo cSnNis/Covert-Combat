@@ -10,7 +10,7 @@ decelerationState = 2
 backwardState = 3
 possibleStates = [forwardState, forwardState, decelerationState, backwardState]
 
-# Define the Player class for the player character
+# Define the NPC class for the for nonplable tanks
 class NPC(BaseTank):
     def __init__(self, game, startPosition):
 
@@ -146,3 +146,4 @@ class NPC(BaseTank):
         self.get_movement()
         
         super().update()
+        

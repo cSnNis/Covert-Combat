@@ -3,6 +3,7 @@ import pygame as pg
 import math
 from main import *
 from BaseTank import BaseTank
+from NPC import NPC
 import random
 
 # Define the Player class for the player character
@@ -119,7 +120,7 @@ class Shell(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
-        self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group]
+        self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group, self.game.obs_group]
         self.speed = 500 #If you adjust the speed, keep it within the hundreds range
 
         self.death_sound = pg.mixer.Sound(tank_explosion_path)
@@ -143,6 +144,11 @@ class Shell(pg.sprite.Sprite):
                         collision = collisions[1]
                     else:
                         continue
+                    
+                if isinstance(collision, NPC) or isinstance(collision, Player): #if the collision is with an NPC, call that NPC's destroy method
+                    collision.destroy()
+
+     
 
                 maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
 
