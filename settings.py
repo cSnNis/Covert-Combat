@@ -66,6 +66,12 @@ wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
 engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
 tank_shoot_path = 'TankMusicSounds\TankShoot.mp3'
 tank_shoot_volume = .12
+tank_explosion_path = 'TankMusicSounds\TankExplosion.mp3'
+tank_explosion_volume = .35
+
+#General Sounds
+fence_collision_path = 'TankMusicSounds\FenceHit.mp3'
+fence_collision_volume = .3
 
 #Tile Settings
 tile_sprite_path = 'images/obstacles/wall image.jpg'

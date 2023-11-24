@@ -35,8 +35,8 @@ class BaseTank(pg.sprite.Sprite):
         #Loading in sounds
         self.turret_rot_sound = pg.mixer.Sound(turret_rot_sound_path)
         self.turret_rot_sound.set_volume(turret_rot_volume)
-        self.wall_thud_sound = pg.mixer.Sound(wall_thud_sound_path)
-        self.wall_thud_sound.set_volume(wall_thud_volume)
+        self.fence_collision_sound = pg.mixer.Sound(fence_collision_path)
+        self.fence_collision_sound.set_volume(fence_collision_volume)
         self.engine_sound = pg.mixer.Sound(engine_sound_path)
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
@@ -143,8 +143,8 @@ class BaseTank(pg.sprite.Sprite):
                     pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                     pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
-                    if self.wall_thud_sound.get_num_channels() == 0:
-                        self.wall_thud_sound.play()
+                    
+
                     return True, collision
         return False, None #If there are no objects colliding, then return False also.
 
