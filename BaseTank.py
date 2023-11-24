@@ -15,14 +15,16 @@ class BaseTank(pg.sprite.Sprite):
         self.angle =  random.uniform(0, 2 * math.pi) # Initial tank angle
 
         #Loading in sprite images.
+        ImageSet = random.choice(TANKSPRITELIST)
+
         self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
-        self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
+        self.image = ImageSet[0]
         self.rect = self.image.get_rect()  # Create a rect for the player sprite
         self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
         
         self.turret_angle = random.uniform(0, 2 * math.pi)  # Initial turret angle
-        self.turret_image = pg.image.load(turret_sprite_path).convert_alpha(); self.turret_image = pg.transform.scale(self.turret_image, (self.turret_image.get_width() * RESMULTX * tankSpriteScalingFactor, self.turret_image.get_height() * RESMULTY * tankSpriteScalingFactor)) # Load turret image
-        
+        self.turret_image = ImageSet[1]
+
         #Creating collision Variables
         self.collidables = [self.game.map.walls, game.player_group, game.NPC_group, game.obs_group] #Anything that should be collided with should be in this group.
         self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
@@ -34,7 +36,7 @@ class BaseTank(pg.sprite.Sprite):
         self.stopped = True
 
         #Loading in sounds
-        self.turret_rot_sound = pg.mixer.Sound(turret_rot_sound_path)
+        self.turret_rot_sound = THUDSOUND
         self.turret_rot_sound.set_volume(turret_rot_volume)
         self.fence_collision_sound = pg.mixer.Sound(fence_collision_path)
         self.fence_collision_sound.set_volume(fence_collision_volume)
@@ -157,8 +159,6 @@ class BaseTank(pg.sprite.Sprite):
         DeadTank(self.game, self.rect.center)
         print(str(self), 'has died.') #I'm leaving this here just in case, but in order for this to work properly, both the NPC and Player class need a __str__ method
         self.kill()
-        print(str(self.groups))
-
 
     # Method to update the tank's state
     def update(self):

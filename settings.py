@@ -1,5 +1,6 @@
 import pygame as pg
 
+
 #Display settings
 res = WIDTH,HEIGHT = 800,450
 fps = 60 
@@ -9,9 +10,13 @@ splash_image_path = "MenuResources/CovertCombatSplashArt.png"
 logo_image_path = "MenuResources/CovertCombatLogo.png"
 start_instructions = ["You and the other player control two tanks hidden amongst a sea of tanks.",
                        "It is your job to hunt and kill the other player, without being killed.",
+                       "To find your tank, press 1 for P1 and 2 for P2 to reveal them. Be careful not to reveal yourself.",
                        "Press SPACE to start, or ESC to quit."]
 start_music_path = 'TankMusicSounds/05 - Theme 2.mp3'
 start_font_path = 'MenuResources/Capsmall.ttf'
+
+#Victory Screen Settings
+victory_music_path = 'TankMusicSounds/02 - Briefing.mp3'
 
 #Background music settings
 bg_music_volume = .15
@@ -41,7 +46,7 @@ minimumBounceSpeed = 1 #The minimum velocity of bounce from a collision. This is
 bounceDeceleration = 1 #The rate at which the bounce loses velocity.
 
     #Tank Sprites
-tank_sprite_path = 'images/tank/TankBody.png'
+tank_sprite_path = 'images/tank/GreenTankBody.png'
 turret_sprite_path = 'images/tank/Turret.png'
 tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
@@ -87,8 +92,27 @@ tile_sprite_path = 'images/obstacles/wall image.jpg'
 # DO NOT CHANGE VALUES BELOW THIS LINE unless you're sure. They are calculated based off of earlier set values.
 # They are not safe to change, as changing them could set off proportions. 
 
+#These must be initialized here to preload images, as Pygame requires a resolution be set and it's image modules be initialized.
+pg.init()
+pg.display.set_mode(res)
+
 #Screen dimension multipliers. Multiply anything displayed by these to correct for changed resolution.
 RESMULTX = res[0] / 1600 
 RESMULTY = res[1] / 900
 
 COORDINATEMULT = COORDINATEMULTX, COORDINATEMULTY =  100 * RESMULTX, 100 * RESMULTY
+
+
+#Pre-loading tank images
+GREENTANKIMAGE = pg.image.load('images/tank/GreenTankBody.png').convert_alpha(); GREENTANKIMAGE = pg.transform.scale(GREENTANKIMAGE, (GREENTANKIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, GREENTANKIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
+GREENTURRETIMAGE = pg.image.load('images/tank/GreenTurret.png').convert_alpha(); GREENTURRETIMAGE = pg.transform.scale(GREENTURRETIMAGE, (GREENTURRETIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, GREENTURRETIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
+#BLUETANKIMAGE
+#BLUETURRETIMAGE <- Will be added later
+
+    #List of tank sprite pairs, which BaseTank picks a random set from when it's initialized.
+TANKSPRITELIST = [(GREENTANKIMAGE, GREENTURRETIMAGE)]
+
+#Pre-loading sounds
+THUDSOUND = pg.mixer.Sound(turret_rot_sound_path)
+
+
