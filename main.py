@@ -70,12 +70,33 @@ class Game:
       #Creating the sprite groups that will be used for collisions. Creation of these groups must precede any tank object initialization, due to them being referenced in both __init__'s.
     self.player_group = pg.sprite.Group() 
     self.NPC_group = pg.sprite.Group()
-      #Spawning in the two players
-    self.p1 = Player(self, player_pos, p1Inputs)
-    self.p2 = Player(self, player_pos, p2Inputs)
+
+      #Finding which spaces on the map are empty. An empty space is represented by a False in the map.mini_map.
+    self.availableCells = []
+    # rowNum = 1
+    # cellNum = 1
+    # for row in self.map.mini_map:
+    #   for cell in row:
+    #     if cell == False:
+    #       self.available.append((rowNum, cellNum))
+    #     cellNum += 1
+    #   rowNum += 1
+    #   cellNum = 1
+    # print(rowNum, cellNum)
+
+    for row in range(len(self.map.mini_map)):
+      for cell in range(len(self.map.mini_map[row])):
+        if self.map.mini_map[row][cell] == False:
+          self.availableCells.append((row, cell))
+    print(self.availableCells)
+    #random.shuffle(self.availableCells) #Introduce randomness to spawning. Otherwise, they would spawn in order.
+
+      #Spawning in the two players, using the newly found free spaces.
+    self.p1 = Player(self, (2,2), p1Inputs)
+    self.p2 = Player(self, self.availableCells.pop(0), p2Inputs)
       #Spawning in the NPCs
     for i in range(5):
-      NPC(self, (i,i))
+      NPC(self, self.availableCells.pop(0))
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
@@ -107,7 +128,8 @@ class Game:
       NPC.draw()
     
     self.shell_group.draw(self.screen)
-    #self.shell_group.draw(self.screen)
+
+    self.debug.draw()
 
   def check_events(self):
     for event in pg.event.get():
