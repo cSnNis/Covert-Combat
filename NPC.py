@@ -4,10 +4,11 @@ import math
 from main import *
 from BaseTank import BaseTank
 import random
+import imageio.v3 as iio #ignore this
 
 
 
-# Define the Player class for the player character
+# Define the NPC class for the for nonplable tanks
 class NPC(BaseTank):
     def __init__(self, game, startPosition, startAngle):
 
@@ -23,9 +24,4 @@ class NPC(BaseTank):
         self.get_movement()
         
         super().update()
-
-    def destroy(self):
-        self.status = "Dead" #We don't have an obstacle class so I decided to just leave everything on here for now
-        print(self, 'has died.')
-        self.image = pg.image.load(GD_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))
         

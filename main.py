@@ -66,6 +66,8 @@ class Game:
 
     self.shell_group = pg.sprite.Group()
 
+    self.obs_group = pg.sprite.Group() #obstacles
+
     #Spawning in the tanks
       #Creating the sprite groups that will be used for collisions. Creation of these groups must precede any tank object initialization, due to them being referenced in both __init__'s.
     self.player_group = pg.sprite.Group() 
@@ -107,7 +109,8 @@ class Game:
       NPC.draw()
     
     self.shell_group.draw(self.screen)
-    #self.shell_group.draw(self.screen)
+    self.obs_group.draw(self.screen)
+
 
   def check_events(self):
     for event in pg.event.get():

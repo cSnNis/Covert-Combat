@@ -90,12 +90,6 @@ class Player(BaseTank):
             Shell(self.game, self.rect.centerx, self.rect.centery, self).add(self.shell_group) #Makes a shell that shoots from center of the top side
             print('Bullet shot, there are ' + str(len(self.shell_group)))
 
-    def destroy(self):
-        self.status = "Dead" #We don't have an obstacle class so I decided to just leave everything on here for now
-        '''My thinking was that if we need to prevent movement on any instance, we just have an if statement that bypasses key inputs if its status is "dead"'''
-        print(self, 'has died.')
-        self.image = pg.image.load(GD_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))
-
     # Override of the basetank method, which updates the shells also.
     def update(self):
         self.get_movement() #Get any player inputs, and apply them to movement variables.
@@ -122,7 +116,7 @@ class Shell(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.image, math.degrees(self.angle))
         self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
-        self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group]
+        self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group, self.game.obs_group]
         self.speed = 500 #If you adjust the speed, keep it within the hundreds range
 
     def update(self):
@@ -144,7 +138,7 @@ class Shell(pg.sprite.Sprite):
                     else:
                         continue
                     
-                if isinstance(collision, NPC): #if the collision is with an NPC, call that NPC's destroy method
+                if isinstance(collision, NPC) or isinstance(collision, Player): #if the collision is with an NPC, call that NPC's destroy method
                     collision.destroy()
 
      
