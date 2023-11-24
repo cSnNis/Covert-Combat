@@ -61,6 +61,7 @@ player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
 
     #Shooting Settings
+ShellCooldownTime = .5
 shell_sprite_path = 'images/tank/Shell.png'
 shell_sprite_dimensions = (50,50)
 

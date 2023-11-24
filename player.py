@@ -81,7 +81,7 @@ class Player(BaseTank):
         
         self.CooldownTimer += self.game.delta_time
         if keys[self.inputs[6]]:
-            if self.CooldownTimer > .2:
+            if self.CooldownTimer > ShellCooldownTime:
                 self.CooldownTimer = 0
                 self.shoot()
                 #shell = self.shoot() #attempts to create a shell object, if the limit was reached, no shell will be made
