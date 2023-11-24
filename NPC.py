@@ -10,7 +10,7 @@ class NPC(BaseTank):
     def __init__(self, game, startPosition):
 
         #Initialialize tank properties.
-        super().__init__(game, game.NPC_group, startPosition, startAngle)
+        super().__init__(game, game.NPC_group, startPosition)
         self.destination = (0,0)
         self.destinationAngle = 0
         self.add(game.NPC_group)
