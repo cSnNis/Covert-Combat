@@ -21,6 +21,7 @@ class NPC(BaseTank):
         self.direction = 0 #The direction the NPC is currently aiming to go. It is picked by self.generateDirection
         self.turret_direction = 0 #The direction the turret is tending towards.
         self.decelerateFromCollision = False
+        self.ShouldRotate = True
         self.RotatePositive = False #Randomly set by generateDirection()
         self.movementState = 1
         self.changeDirection()
@@ -29,17 +30,18 @@ class NPC(BaseTank):
 
     def get_movement(self): #Generate movement for the NPC, given it's angle, intended direction, and current state.
         #Rotating the tank towards self.direction.
-        if abs(self.angle - self.direction) > 1:
-            if self.RotatePositive: #Randomly set inside changeDirection. "Positive" means counterclockwise.
-                if self.angle > self.direction:
-                    self.angle += player_rot_speed * self.game.delta_time
+        if self.ShouldRotate:
+            if abs(self.angle - self.direction) > 1:
+                if self.RotatePositive: #Randomly set inside changeDirection. "Positive" means counterclockwise.
+                    if self.angle > self.direction:
+                        self.angle += player_rot_speed * self.game.delta_time
+                    else:
+                        self.angle -= player_rot_speed * self.game.delta_time
                 else:
-                    self.angle -= player_rot_speed * self.game.delta_time
-            else:
-                if self.angle > self.direction:
-                    self.angle -= player_rot_speed * self.game.delta_time
-                else:
-                    self.angle += player_rot_speed * self.game.delta_time
+                    if self.angle > self.direction:
+                        self.angle -= player_rot_speed * self.game.delta_time
+                    else:
+                        self.angle += player_rot_speed * self.game.delta_time
 
         #Apply acceleration, depending on the current state.
         match self.movementState:
@@ -58,9 +60,9 @@ class NPC(BaseTank):
                     self.deflectionSpeed = 0
 
                     if self.speed > 0: #If the NPC was moving forward before decelerating,
-                        self.movementState = backwardState #The NPC should reverse
+                        self.movementState = backwardState #The NPC should now reverse
                     else:
-                        self.movementState = forwardState
+                        self.movementState = forwardState #If not, then it was going backwards, and should then accelerate forward.
                     
                     self.changeDirection() #and also get a new direction
                     self.engine_sound.stop()
@@ -130,16 +132,17 @@ class NPC(BaseTank):
 
     # Override of the BaseTank method. So far it does nothing, but any NPC specific logic can be written here.
     def update(self):
-        if self.isColliding[0]: #If there was a collision this frame, then begin decelerating and set a new course
+        if self.isColliding[0]: #If the NPC has collided with something this frame, then begin decelerating and set a new course
+            self.ShouldRotate = False
             pg.draw.rect(self.game.screen, 'green', self.rect)
             self.movementState = decelerationState
             self.direction = self.deflectionAngle
-            self.RotatePositive = random.choice((True, False)) #Also, flip which way the NPC tank is rotating, because why not.
-        elif random.random() < .05: #If the NPC is not colliding, then there is a 1 in 20 chance per frame to change direction
-            #self.changeDirection()
-            pass
-        elif random.random() < .1: #If it hasn't collided or changed direciton, then there is a 1 in 10 chance for it to change movement state.
-            self.changeMovementState()
+        if self.movementState != decelerationState: #If it is moving forward
+            self.ShouldRotate = True
+            if random.random() < .01: #Then there is a 1 in 100 chance per frame to change direction
+                self.changeDirection()
+            elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 20 chance for it to change movement state.
+                self.changeMovementState()
 
         pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.direction) * COORDINATEMULTX, self.yDisplay + math.sin(-self.direction) * COORDINATEMULTY), 2)
 
