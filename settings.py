@@ -104,13 +104,20 @@ COORDINATEMULT = COORDINATEMULTX, COORDINATEMULTY =  100 * RESMULTX, 100 * RESMU
 
 
 #Pre-loading tank images
-GREENTANKIMAGE = pg.image.load('images/tank/GreenTankBody.png').convert_alpha(); GREENTANKIMAGE = pg.transform.scale(GREENTANKIMAGE, (GREENTANKIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, GREENTANKIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
-GREENTURRETIMAGE = pg.image.load('images/tank/GreenTurret.png').convert_alpha(); GREENTURRETIMAGE = pg.transform.scale(GREENTURRETIMAGE, (GREENTURRETIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, GREENTURRETIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
-#BLUETANKIMAGE
-#BLUETURRETIMAGE <- Will be added later
+GREENTANKIMAGE = pg.image.load('images/tank/GreenTankBody.png').convert_alpha(); GREENTANKIMAGE = pg.transform.scale(GREENTANKIMAGE, (GREENTANKIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, GREENTANKIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))
+GREENTURRETIMAGE = pg.image.load('images/tank/GreenTurret.png').convert_alpha(); GREENTURRETIMAGE = pg.transform.scale(GREENTURRETIMAGE, (GREENTURRETIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, GREENTURRETIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))
+GREENDESTROYED = pg.image.load('images/obstacles/G_Destroyed.png').convert_alpha(); GREENDESTROYED = pg.transform.scale(GREENDESTROYED, (GREENDESTROYED.get_width() * RESMULTX * tankSpriteScalingFactor, GREENDESTROYED.get_height() * RESMULTY * tankSpriteScalingFactor))
+
+BLUETANKIMAGE = pg.image.load('images/tank/BlueTankBody.png').convert_alpha(); BLUETANKIMAGE = pg.transform.scale(BLUETANKIMAGE, (BLUETANKIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, BLUETANKIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))
+BLUETURRETIMAGE = pg.image.load('images/tank/BlueTurret.png').convert_alpha(); BLUETURRETIMAGE = pg.transform.scale(BLUETURRETIMAGE, (BLUETURRETIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, BLUETURRETIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))
+BLUEDESTROYED = pg.image.load('images/obstacles/B_Destroyed.png').convert_alpha(); BLUEDESTROYED = pg.transform.scale(BLUEDESTROYED, (BLUEDESTROYED.get_width() * RESMULTX * tankSpriteScalingFactor, BLUEDESTROYED.get_height() * RESMULTY * tankSpriteScalingFactor))
+
+REDTANKIMAGE = pg.image.load('images/tank/RedTankBody.png').convert_alpha(); REDTANKIMAGE = pg.transform.scale(REDTANKIMAGE, (REDTANKIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, REDTANKIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))
+REDTURRETIMAGE = pg.image.load('images/tank/RedTurret.png').convert_alpha(); REDTURRETIMAGE = pg.transform.scale(REDTURRETIMAGE, (REDTURRETIMAGE.get_width() * RESMULTX * tankSpriteScalingFactor, REDTURRETIMAGE.get_height() * RESMULTY * tankSpriteScalingFactor))
+REDDESTROYED = pg.image.load('images/obstacles/R_Destroyed.png').convert_alpha(); REDDESTROYED = pg.transform.scale(REDDESTROYED, (REDDESTROYED.get_width() * RESMULTX * tankSpriteScalingFactor, REDDESTROYED.get_height() * RESMULTY * tankSpriteScalingFactor))
 
     #List of tank sprite pairs, which BaseTank picks a random set from when it's initialized.
-TANKSPRITELIST = [(GREENTANKIMAGE, GREENTURRETIMAGE)]
+TANKSPRITELIST = [(GREENTANKIMAGE, GREENTURRETIMAGE, GREENDESTROYED), (BLUETANKIMAGE, BLUETURRETIMAGE, BLUEDESTROYED), (REDTANKIMAGE, REDTURRETIMAGE, REDDESTROYED)]
 
 #Pre-loading sounds
 THUDSOUND = pg.mixer.Sound(turret_rot_sound_path)
