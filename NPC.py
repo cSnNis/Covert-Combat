@@ -19,25 +19,27 @@ class NPC(BaseTank):
 
         #Pathfinding variables
         self.direction = 0 #The direction the NPC is currently aiming to go. It is picked by self.generateDirection
+        self.turret_direction = 0 #The direction the turret is tending towards.
         self.decelerateFromCollision = False
         self.RotatePositive = False #Randomly set by generateDirection()
         self.movementState = 1
         self.changeDirection()
 
-        print("My start position was",startPosition, "in ", self.movementState)
-
         self.add(game.NPC_group)
 
     def get_movement(self): #Generate movement for the NPC, given it's angle, intended direction, and current state.
         #Rotating the tank towards self.direction.
-        if not self.angle == self.direction:
-            if self.RotatePositive:
+        if abs(self.angle - self.direction) > 1:
+            if self.RotatePositive: #Randomly set inside changeDirection. "Positive" means counterclockwise.
                 if self.angle > self.direction:
                     self.angle += player_rot_speed * self.game.delta_time
+                else:
+                    self.angle -= player_rot_speed * self.game.delta_time
             else:
                 if self.angle > self.direction:
                     self.angle -= player_rot_speed * self.game.delta_time
-
+                else:
+                    self.angle += player_rot_speed * self.game.delta_time
 
         #Apply acceleration, depending on the current state.
         match self.movementState:
@@ -128,15 +130,18 @@ class NPC(BaseTank):
 
     # Override of the BaseTank method. So far it does nothing, but any NPC specific logic can be written here.
     def update(self):
-        if self.isColliding[0] and type(self.isColliding[1]) is not NPC: #If there was a collision this frame, then begin decelerating and set a new course
+        if self.isColliding[0]: #If there was a collision this frame, then begin decelerating and set a new course
             pg.draw.rect(self.game.screen, 'green', self.rect)
             self.movementState = decelerationState
-            self.changeDirection()
+            self.direction = self.deflectionAngle
+            self.RotatePositive = random.choice((True, False)) #Also, flip which way the NPC tank is rotating, because why not.
         elif random.random() < .05: #If the NPC is not colliding, then there is a 1 in 20 chance per frame to change direction
-            self.changeDirection()
-        elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 10 chance for it to change movement state.
+            #self.changeDirection()
+            pass
+        elif random.random() < .1: #If it hasn't collided or changed direciton, then there is a 1 in 10 chance for it to change movement state.
             self.changeMovementState()
 
+        pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.direction) * COORDINATEMULTX, self.yDisplay + math.sin(-self.direction) * COORDINATEMULTY), 2)
 
         self.get_movement()
         
