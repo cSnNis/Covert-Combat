@@ -20,6 +20,9 @@ class Player(BaseTank):
         
         self.turretMovement = True
 
+        self.shoot_sound = pg.mixer.Sound(tank_shoot_path)
+        self.shoot_sound.set_volume(tank_shoot_volume)
+
     def get_movement(self): #Get movement from the player.
         keys = pg.key.get_pressed() #dictionary of keys pressed this frame
         if keys[self.inputs[0]]: #Forward 
@@ -65,9 +68,15 @@ class Player(BaseTank):
         if keys[self.inputs[4]]: #Turret turning
             self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
-        if keys[self.inputs[5]]:
+            if self.turret_rot_sound.get_num_channels() == 0:
+                self.turret_rot_sound.play(-1)
+        elif keys[self.inputs[5]]:
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
+            if self.turret_rot_sound.get_num_channels() == 0:
+                self.turret_rot_sound.play(-1)
+        else:
+            self.turret_rot_sound.stop()
         
         self.CooldownTimer += self.game.delta_time
         if keys[self.inputs[6]]:
@@ -78,15 +87,10 @@ class Player(BaseTank):
                 # if shell: #if a shell was produced (there is either an shell object or None here)
                 #     self.shell_group.add(shell)
 
-        if keys[self.inputs[5]] or keys[self.inputs[4]]:
-            if self.turret_rot_sound.get_num_channels() == 0:
-                self.turret_rot_sound.play(-1)
-        else:
-            self.turret_rot_sound.stop()
-
     def shoot(self): 
         if len(self.shell_group) <= 5: #If there are more than 6 shells on screen, don't create another
             Shell(self.game, (self.xDisplay + (math.cos(self.turret_angle) * 80 * RESMULTX)), (self.yDisplay + (math.sin(-self.turret_angle) * 80 * RESMULTY)), self).add(self.shell_group) #Makes a shell that shoots from center of the top side
+            self.shoot_sound.play()
             print('Bullet shot, there are ' + str(len(self.shell_group)))
 
     # Override of the basetank method, which updates the shells also.
@@ -117,6 +121,9 @@ class Shell(pg.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
         self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group]
         self.speed = 500 #If you adjust the speed, keep it within the hundreds range
+
+        self.death_sound = pg.mixer.Sound(tank_explosion_path)
+        self.death_sound.set_volume(tank_explosion_volume)
 
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time #uses the same angle calculations as the player's turret
@@ -151,6 +158,9 @@ class Shell(pg.sprite.Sprite):
 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
+                self.death_sound.play()
+
                 return True, collision, (x,y)
+            
         return False, None, (0,0) #If there are no objects colliding, then return False also.
 

@@ -121,7 +121,8 @@ class Game:
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
     mixer.music.load(bg_music_path)
-    mixer.music.set_volume(.25)
+    mixer.music.set_volume(bg_music_volume)
+    mixer.music.play(-1)
 
   def update(self):
 
@@ -143,6 +144,11 @@ class Game:
     self.map.draw()
     self.p1.draw()
     self.p2.draw()
+
+    if pg.key.get_pressed()[pg.K_1]:
+      pg.draw.circle(self.screen, 'BLUE', self.p1.display_pos, int(player_intel_diameter*RESMULTX), width=int(player_intel_width*RESMULTX))
+    if pg.key.get_pressed()[pg.K_2]:
+      pg.draw.circle(self.screen, 'GREEN', self.p2.display_pos, int(player_intel_diameter*RESMULTX), width=int(player_intel_width*RESMULTX))
     
     for NPC in self.NPC_group:
       NPC.draw()
@@ -151,17 +157,16 @@ class Game:
 
     self.debug.draw()
 
+
+
   def check_events(self):
     for event in pg.event.get():
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
-      if event.type == pg.KEYDOWN and event.key == pg.K_m:
-        if mixer.music.get_busy() == False:
-          mixer.music.play(-1)
-        else:
-          mixer.music.stop()
-
+        
+        
+    
   def run(self):
     self.start_menu()
     while True: #Keep looping until the game quits.

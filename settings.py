@@ -14,11 +14,12 @@ start_music_path = 'TankMusicSounds/05 - Theme 2.mp3'
 start_font_path = 'MenuResources/Capsmall.ttf'
 
 #Background music settings
-bg_music_volume = .25
-bg_music_path = 'TankMusicSounds/BattleMusic.mp3'
+bg_music_volume = .15
+bg_music_path = 'TankMusicSounds\BattleMusic.mp3'
 
-#Victory Menu Settings
-victory_music_path = 'TankMusicSounds/02 - Briefing.mp3'
+#Sets the size of the circle showing each player
+player_intel_diameter = 80
+player_intel_width = 8
 
 #Tank Settings
     #Starting position values
@@ -63,11 +64,19 @@ p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_c, pg.K_v, pg.K_LSHIFT)
 p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH, pg.K_RSHIFT)
 
     #Tank Sounds
-turret_rot_volume = .2
-turret_rot_sound_path = 'TankMusicSounds/TurretRotate.mp3'
+turret_rot_volume = .35
+turret_rot_sound_path = 'TankMusicSounds\TurretRotate.mp3'
 wall_thud_volume = .75
-wall_thud_sound_path = 'TankMusicSounds/WallThud.mp3'
-engine_sound_path = 'TankMusicSounds/EngineSound.mp3'
+wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
+engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
+tank_shoot_path = 'TankMusicSounds\TankShoot.mp3'
+tank_shoot_volume = .12
+tank_explosion_path = 'TankMusicSounds\TankExplosion.mp3'
+tank_explosion_volume = .35
+
+#General Sounds
+fence_collision_path = 'TankMusicSounds\FenceHit.mp3'
+fence_collision_volume = .3
 
 #Tile Settings
 tile_sprite_path = 'images/obstacles/wall image.jpg'
