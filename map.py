@@ -40,7 +40,7 @@ class Map:
                         wall = Wall(i, j, tile_sprite_path, (100, 100))
                         self.walls.add(wall)
                     elif value == 2:
-                        obstacle2_image = tank_sprite_path  # Replace with the actual path
+                        obstacle2_image = 'images/tank/GreenTankBody.png'  # Replace with the actual path
                         obstacle2 = Wall(i, j, obstacle2_image, (50,100))
                         self.walls.add(obstacle2)
 
