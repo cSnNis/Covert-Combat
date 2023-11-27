@@ -2,7 +2,7 @@ import pygame as pg
 
 
 #Display settings
-res = WIDTH,HEIGHT = 1920,1080
+res = WIDTH,HEIGHT = 900,450
 fps = 60 
 
 #Start Menu settings
@@ -71,7 +71,7 @@ p1Inputs = (pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_c, pg.K_v, pg.K_LSHIFT)
 p2Inputs = (pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_PERIOD, pg.K_SLASH, pg.K_RSHIFT)
 
     #Tank Sounds
-turret_rot_volume = .35
+turret_rot_volume = .3
 turret_rot_sound_path = 'TankMusicSounds\TurretRotate.mp3'
 wall_thud_volume = .75
 wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'

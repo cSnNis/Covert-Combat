@@ -23,7 +23,9 @@ class Player(BaseTank):
 
         self.shoot_sound = SHOOTSOUND
         self.shoot_sound.set_volume(tank_shoot_volume)
-        self.engine_sound = ENGINESOUND
+        self.engine_sound = pg.mixer.Sound(engine_sound_path)
+        self.turret_rot_sound = pg.mixer.Sound(turret_rot_sound_path)
+        self.turret_rot_sound.set_volume(turret_rot_volume)
 
     def get_movement(self): #Get movement from the player.
         keys = pg.key.get_pressed() #dictionary of keys pressed this frame
