@@ -36,7 +36,7 @@ class Player(BaseTank):
             self.speed += player_accel * self.game.delta_time            
             self.engine_sound.set_volume(self.speed/5)
             if self.engine_sound.get_num_channels() == 0:
-                self.engine_sound.play(-1)
+                pg.mixer.Channel(0).play(self.engine_sound)
         elif keys[self.inputs[1]]: #Backward acceleration
             if self.speed > 0: #If the tank is moving forward and is now trying to move backward, then the tank should also deccelerate
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
@@ -44,7 +44,7 @@ class Player(BaseTank):
             self.speed -= player_accel * self.game.delta_time
             self.engine_sound.set_volume(abs(self.speed)/5)
             if self.engine_sound.get_num_channels() == 0:                
-                self.engine_sound.play(-1)
+                pg.mixer.Channel(0).play(self.engine_sound)
         else: #No inputs, begin decelerating
             if not self.stopped:
                 if abs(self.speed) > accelsens:
@@ -73,12 +73,12 @@ class Player(BaseTank):
             self.turret_angle += player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
             if self.turret_rot_sound.get_num_channels() == 0:
-                self.turret_rot_sound.play(-1)
+                pg.mixer.Channel(1).play(self.turret_rot_sound)
         elif keys[self.inputs[5]]:
             self.turret_angle -= player_rot_speed * self.game.delta_time
             self.turret_angle %= math.tau 
             if self.turret_rot_sound.get_num_channels() == 0:
-                self.turret_rot_sound.play(-1)
+                pg.mixer.Channel(1).play(self.turret_rot_sound)
         else:
             self.turret_rot_sound.stop()
         
@@ -94,7 +94,7 @@ class Player(BaseTank):
     def shoot(self): 
         if len(self.shell_group) <= 5: #If there are more than 6 shells on screen, don't create another
             Shell(self.game, (self.xDisplay + (math.cos(self.turret_angle) * 80 * RESMULTX)), (self.yDisplay + (math.sin(-self.turret_angle) * 80 * RESMULTY)), self).add(self.shell_group) #Makes a shell that shoots from center of the top side
-            self.shoot_sound.play()
+            pg.mixer.Channel(2).play(self.shoot_sound)
             print('Bullet shot, there are ' + str(len(self.shell_group)))
 
     # Override of the basetank method, which updates the shells also.
@@ -164,7 +164,7 @@ class Shell(pg.sprite.Sprite):
 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
-                self.shell_collision_sound.play()
+                pg.mixer.Channel(3).play(self.shell_collision_sound)
 
                 return True, collision, (x,y)
             

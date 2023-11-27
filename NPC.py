@@ -55,7 +55,7 @@ class NPC(BaseTank):
                 self.speed += player_accel * self.game.delta_time
                 self.engine_sound.set_volume(self.speed/5)
                 if self.engine_sound.get_num_channels() == 0:
-                    self.engine_sound.play(-1)
+                    pg.mixer.Channel(4).play(self.engine_sound)
             case 2: # Deceleration state. This is defaulted to when the NPC collides with something.
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
 
@@ -73,7 +73,7 @@ class NPC(BaseTank):
                 self.speed -= player_accel * self.game.delta_time
                 self.engine_sound.set_volume(self.speed/5)
                 if self.engine_sound.get_num_channels() == 0:
-                    self.engine_sound.play(-1)
+                    pg.mixer.Channel(4).play(self.engine_sound)
         
         self.engine_sound.set_volume(self.speed/5)
 

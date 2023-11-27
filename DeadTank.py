@@ -15,4 +15,8 @@ class DeadTank(pg.sprite.Sprite):
         (for when there's different colors), for now GD is the default'''
         self.image = pg.transform.rotate(image, math.degrees(rotation))
         self.rect = self.image.get_rect(center = spawnPosition)
+
+        self.explosion_sound = TANKEXPLOSION
+        self.explosion_sound.set_volume(tank_death_volume)
+        pg.mixer.Channel(5).play(self.explosion_sound)
         
