@@ -15,8 +15,11 @@ class DeadTank(pg.sprite.Sprite):
         self.image = pg.transform.rotate(image, math.degrees(rotation))
         self.rect = self.image.get_rect(center = spawnPosition)
 
-class Explosions(pg.sprite.Sprite):
+        Explosion(self.game,self.spawnPosition).add(self.game.explosion_group)
+
+class Explosion(pg.sprite.Sprite):
     def __init__(self, game, position):
+        pg.sprite.Sprite.__init__(self)
         self.subsurfaceWidth = 180 * RESMULTX
         self.subsurfaceHeight = 180 * RESMULTY
 
