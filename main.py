@@ -97,6 +97,7 @@ class Game:
     self.map = Map(self)
 
     self.obs_group = pg.sprite.Group() #obstacles
+    self.explosion_group = pg.sprite.Group() # A group that handles explosion animations
 
     #Spawning in the tanks
       #Creating the sprite groups that will be used for collisions. Creation of these groups must precede any tank object initialization, due to them being referenced in both __init__'s.
@@ -134,6 +135,9 @@ class Game:
     for NPC in self.NPC_group:
       NPC.update()
     
+    for explosion in self.explosion_group:
+      explosion.update()
+
     pg.display.flip()
     self.delta_time = self.clock.tick(fps) / 1000
     pg.display.set_caption(f'COVERT COMBAT {self.clock.get_fps() :.1f}')
@@ -146,7 +150,6 @@ class Game:
     for player in self.player_group:
       player.draw()
 
-
     if pg.key.get_pressed()[pg.K_1]:
       pg.draw.circle(self.screen, 'BLUE', self.p1.display_pos, int(player_intel_diameter*RESMULTX), width=int(player_intel_width*RESMULTX))
     if pg.key.get_pressed()[pg.K_EQUALS]:
@@ -156,6 +159,7 @@ class Game:
       NPC.draw()
     
     self.obs_group.draw(self.screen)
+    self.explosion_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():
@@ -173,8 +177,7 @@ class Game:
         self.update()
         self.draw()
       self.victory_screen()
-  
-  
+   
 if __name__ == '__main__':
   game = Game()
   game.run()
