@@ -20,10 +20,10 @@ class NPC(BaseTank):
         #Pathfinding variables
         self.direction = 0 #The direction the NPC is currently aiming to go. It is picked by self.generateDirection
         self.turret_direction = 0 #The direction the turret is tending towards.
-        self.decelerateFromCollision = False
+
         self.ShouldRotate = True
         self.RotatePositive = False #Randomly set by generateDirection()
-        self.movementState = 1
+        self.movementState = decelerationState
         self.changeDirection()
 
         self.add(game.NPC_group)
@@ -46,6 +46,7 @@ class NPC(BaseTank):
         #Apply acceleration, depending on the current state.
         match self.movementState:
             case 1:# forward state
+                self.ShouldRotate = True
                 self.stopped = False
                 self.speed += player_accel * self.game.delta_time
                 self.engine_sound.set_volume(self.speed/5)
@@ -56,7 +57,9 @@ class NPC(BaseTank):
 
                 if abs(self.speed) < accelsens: #Once fully decelerated, change states.
                     self.stopped = True
+                    self.ShouldRotate = True #Begin having the tank rotate again. This is switched off whenever there is a collision.
                     self.engine_sound.stop()
+                    self.changeDirection()
 
                     if self.speed > 0: #If the NPC was moving forward before decelerating,
                         self.movementState = backwardState #The NPC should now reverse
@@ -64,6 +67,7 @@ class NPC(BaseTank):
                         self.movementState = forwardState #If not, then it was going backwards, and should then accelerate forward.
                     self.engine_sound.stop()
             case 3: #backward state
+                self.ShouldRotate = True
                 self.stopped = False
                 self.speed -= player_accel * self.game.delta_time
                 self.engine_sound.set_volume(self.speed/5)
@@ -129,19 +133,21 @@ class NPC(BaseTank):
 
     # Override of the BaseTank method. So far it does nothing, but any NPC specific logic can be written here.
     def update(self):
-        if self.isColliding[0]: #If the NPC has collided with something this frame, then begin decelerating and set a new course
-            self.ShouldRotate = False
-            pg.draw.rect(self.game.screen, 'green', self.rect)
-            self.movementState = decelerationState
-            self.direction = self.deflectionAngle
-        if self.movementState != decelerationState: #If it is moving forward
-            self.ShouldRotate = True
-            if random.random() < .01: #Then there is a 1 in 100 chance per frame to change direction
-                self.changeDirection()
-            elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 20 chance for it to change movement state.
-                self.changeMovementState()
+        if self.movementState != decelerationState: #If it is moving;
 
-        pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.direction) * COORDINATEMULTX, self.yDisplay + math.sin(-self.direction) * COORDINATEMULTY), 2)
+            if self.isColliding[0] and self.isColliding[1] is not NPC: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
+                self.ShouldRotate = False
+                #pg.draw.rect(self.game.screen, 'green', self.rect)
+                self.movementState = decelerationState
+                self.direction = self.deflectionAngle
+            
+            else: #If there have been no collisions this frame, 
+                if random.random() < .01: #Then there is a 1 in 100 chance per frame to change direction
+                    self.changeDirection()
+                elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 20 chance for it to change movement state.
+                    self.changeMovementState()
+
+        #pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.direction) * COORDINATEMULTX, self.yDisplay + math.sin(-self.direction) * COORDINATEMULTY), 2)
 
         self.get_movement()
         
