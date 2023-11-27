@@ -104,7 +104,7 @@ class BaseTank(pg.sprite.Sprite):
                     #Find that intersecting point in world game space.
                     x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
                     y = self.rect.top + maskCollisionPoint[1]
-                    pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
+                    #pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
                     #Getting the angle of the collision point to the center of the tank.
                     
