@@ -145,7 +145,7 @@ class NPC(BaseTank):
 
         if self.movementState != decelerationState: #If it is moving;
 
-            if self.isColliding[0] and type(self.isColliding[1]) != NPC: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
+            if self.isColliding[0]: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
                 self.ShouldRotate = False
                 #pg.draw.rect(self.game.screen, 'green', self.rect)
                 self.movementState = decelerationState
