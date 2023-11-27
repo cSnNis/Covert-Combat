@@ -39,12 +39,13 @@ class Game:
     if not pg.font.get_init(): #If the font module is not initialized, 
       pg.font.init() #Initialize it. 
     start_font = pg.font.Font(start_font_path,30)
-    yaddition = 300 * RESMULTY
+    yaddition = 200 * RESMULTY
     for line in start_instructions: #Print out each line of the starting instructions.
       instructionsImageUnscaled = start_font.render(line, True, 'white', 'black')
       instructionsImage = pg.transform.scale(instructionsImageUnscaled, (instructionsImageUnscaled.get_rect().width * RESMULTX,instructionsImageUnscaled.get_rect().height * RESMULTY))
       splashImage.blit(instructionsImage, instructionsImage.get_rect(center=(res[0]/2,res[1]/2 + yaddition)))
       yaddition += 35 * RESMULTY
+
 
     #Finally, draw the completed splash art. 
     self.screen.blit(splashImage, splashImage.get_rect(topleft = (0,0)))
@@ -114,8 +115,11 @@ class Game:
     self.p1 = Player(self, self.emptyCells.pop(0), p1Inputs)
     self.p2 = Player(self, self.emptyCells.pop(0), p2Inputs)
       #Spawning in the NPCs
-    for i in range(10):
-      NPC(self, self.emptyCells.pop(0))
+    for i in range(15):
+      npc = NPC(self, self.emptyCells.pop(0))
+      if npc.checkCollision()[0] == True:
+        npc.kill()
+        i -= 1
 
     self.debug = DebuggingDisplay.DebugDisplay(self)
 
@@ -148,7 +152,7 @@ class Game:
 
     if pg.key.get_pressed()[pg.K_1]:
       pg.draw.circle(self.screen, 'BLUE', self.p1.display_pos, int(player_intel_diameter*RESMULTX), width=int(player_intel_width*RESMULTX))
-    if pg.key.get_pressed()[pg.K_2]:
+    if pg.key.get_pressed()[pg.K_EQUALS]:
       pg.draw.circle(self.screen, 'GREEN', self.p2.display_pos, int(player_intel_diameter*RESMULTX), width=int(player_intel_width*RESMULTX))
     
     for NPC in self.NPC_group:
@@ -157,16 +161,12 @@ class Game:
     self.obs_group.draw(self.screen)
     self.debug.draw()
 
-
-
   def check_events(self):
     for event in pg.event.get():
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
         
-        
-    
   def run(self):
     self.start_menu()
     while True: #Keep looping until the game quits.
@@ -176,7 +176,6 @@ class Game:
         self.check_events()
         self.update()
         self.draw()
-
       self.victory_screen()
   
   

@@ -10,7 +10,10 @@ splash_image_path = "MenuResources/CovertCombatSplashArt.png"
 logo_image_path = "MenuResources/CovertCombatLogo.png"
 start_instructions = ["You and the other player control two tanks hidden amongst a sea of tanks.",
                        "It is your job to hunt and kill the other player, without being killed.",
-                       "To find your tank, press 1 for P1 and 2 for P2 to reveal them. Be careful not to reveal yourself.",
+                       "P1: Use WASD to move, and C and V to turn the turret. LSHIFT to shoot.",
+                       "P2: Use the Arrows Keys to move, and . and / to turn the turret. RSHIFT to shoot.",
+                       "To find your tank, press 1 for P1 and = (EQUALS key) for P2 to reveal them to everyone.",
+                        "Be careful not to reveal yourself.",
                        "Press SPACE to start, or ESC to quit."]
 start_music_path = 'TankMusicSounds/05 - Theme 2.mp3'
 start_font_path = 'MenuResources/Capsmall.ttf'
