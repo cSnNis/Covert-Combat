@@ -61,11 +61,7 @@ class NPC(BaseTank):
                     self.ShouldRotate = True #Begin having the tank rotate again. This is switched off whenever there is a collision.
                     self.engine_sound.stop()
                     self.changeDirection()
-
-                    if self.speed > 0: #If the NPC was moving forward before decelerating,
-                        self.movementState = backwardState #The NPC should now reverse
-                    else:
-                        self.movementState = forwardState #If not, then it was going backwards, and should then accelerate forward.
+                    self.changeMovementState()
                     self.engine_sound.stop()
             case 3: #backward state
                 self.ShouldRotate = True
