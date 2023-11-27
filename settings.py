@@ -55,8 +55,7 @@ tankSpriteScalingFactor = 1
 GD_path = 'images/obstacles/G_Destroyed.png'
 RD_path = 'images/obstacles/R_Destroyed.png'
 BD_path = 'images/obstacles/B_Destroyed.png'
-#Explosion_path = 'images/tank/explosion-gif-frames'
-Animation = ['images/tank/explosion-gif-frames/frame_03_delay-0.04s.png', 'images/tank/explosion-gif-frames/frame_09_delay-0.04s.png', 'images/tank/explosion-gif-frames/frame_16_delay-0.04s.png']
+Explosion_path = 'images/tank/explosion-gif-frames/Explosion_Sprite_Sheet.png'
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
