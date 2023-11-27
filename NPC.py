@@ -26,6 +26,10 @@ class NPC(BaseTank):
         self.movementState = decelerationState
         self.changeDirection()
 
+        self.engine_sound = ENGINESOUND
+        self.wall_thud_sound = WALLTHUD
+        self.wall_thud_sound.set_volume(wall_thud_volume)
+
         self.add(game.NPC_group)
 
     def get_movement(self): #Generate movement for the NPC, given it's angle, intended direction, and current state.

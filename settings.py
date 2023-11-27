@@ -78,8 +78,10 @@ wall_thud_sound_path = 'TankMusicSounds\WallThud.mp3'
 engine_sound_path = 'TankMusicSounds\EngineSound.mp3'
 tank_shoot_path = 'TankMusicSounds\TankShoot.mp3'
 tank_shoot_volume = .12
-tank_explosion_path = 'TankMusicSounds\TankExplosion.mp3'
-tank_explosion_volume = .35
+shell_collision_path = 'TankMusicSounds\ShellExplosion.mp3'
+shell_collision_volume = .35
+tank_death_path = 'TankMusicSounds\TankExplosion.mp3'
+tank_death_volume = .4
 
 #General Sounds
 fence_collision_path = 'TankMusicSounds\FenceHit.mp3'
@@ -121,6 +123,11 @@ REDDESTROYED = pg.image.load('images/obstacles/R_Destroyed.png').convert_alpha()
 TANKSPRITELIST = [(GREENTANKIMAGE, GREENTURRETIMAGE, GREENDESTROYED), (BLUETANKIMAGE, BLUETURRETIMAGE, BLUEDESTROYED), (REDTANKIMAGE, REDTURRETIMAGE, REDDESTROYED)]
 
 #Pre-loading sounds
-THUDSOUND = pg.mixer.Sound(turret_rot_sound_path)
-
+TROTATESOUND = pg.mixer.Sound(turret_rot_sound_path)
+SHELLSOUND = pg.mixer.Sound(shell_collision_path)
+FENCECOLLISION = pg.mixer.Sound(fence_collision_path)
+ENGINESOUND = pg.mixer.Sound(engine_sound_path)
+SHOOTSOUND = pg.mixer.Sound(tank_shoot_path)
+WALLTHUD = pg.mixer.Sound(wall_thud_sound_path)
+TANKEXPLOSION= pg.mixer.Sound(tank_death_path)
 
