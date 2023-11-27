@@ -166,6 +166,8 @@ class Game:
       if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
         pg.quit()
         sys.exit()
+      if event.type == pg.KEYDOWN and event.key == pg.K_r:
+        self.new_game()
         
   def run(self):
     self.start_menu()
