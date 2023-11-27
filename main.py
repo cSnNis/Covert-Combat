@@ -121,8 +121,6 @@ class Game:
         npc.kill()
         i -= 1
 
-    self.debug = DebuggingDisplay.DebugDisplay(self)
-
     mixer.music.load(bg_music_path)
     mixer.music.set_volume(bg_music_volume)
     mixer.music.play(-1)
@@ -135,8 +133,6 @@ class Game:
     for NPC in self.NPC_group:
       NPC.update()
     
-    self.debug.update()
-
     pg.display.flip()
     self.delta_time = self.clock.tick(fps) / 1000
     pg.display.set_caption(f'COVERT COMBAT {self.clock.get_fps() :.1f}')
@@ -159,7 +155,6 @@ class Game:
       NPC.draw()
     
     self.obs_group.draw(self.screen)
-    self.debug.draw()
 
   def check_events(self):
     for event in pg.event.get():

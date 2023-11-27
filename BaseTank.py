@@ -91,7 +91,7 @@ class BaseTank(pg.sprite.Sprite):
                     if id(collision) == id(self): #The tank shouldn't calculate collisions with itself. Move on to the next collision of this group. It's stupid that this is a problem.
                         continue
 
-                    pg.draw.rect(self.game.screen, 'blue', collision.rect, 3) #Draw a rectangle around the object that is being collided with.
+                    #pg.draw.rect(self.game.screen, 'blue', collision.rect, 3) #Draw a rectangle around the object that is being collided with.
                     
                     maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
                     if maskCollisionPoint == None: #Whether or not there was an actual mask-on-mask collision.
@@ -150,11 +150,11 @@ class BaseTank(pg.sprite.Sprite):
                     deflections.append(deflect_angle)
                     #self.deflectionAngle = deflect_angle
                     
-                    pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
+                    #pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
                     
                     #Red is the tank's forward velocity, blue is the angle of collision, green is the unprocessed angle of collision, and purple is the calculated angle of deflection.
-                    pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
-                    pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+                    #pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
+                    #pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                     #pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
         if len(deflections) == 0: #If there are no objects causing deflections, indicating mask-on-mask collisions, then return that there were no collisions.
@@ -173,9 +173,8 @@ class BaseTank(pg.sprite.Sprite):
 
             self.deflectionAngle = mean(deflections) + math.pi
 
-            pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.deflectionAngle) * COORDINATEMULTX, self.yDisplay + math.sin(-self.deflectionAngle) * COORDINATEMULTY), 2) #deflection angle
+            #pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.deflectionAngle) * COORDINATEMULTX, self.yDisplay + math.sin(-self.deflectionAngle) * COORDINATEMULTY), 2) #deflection angle
             return True, totalcollisions
-
 
     def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
         return (0 < x < 16 and 0 < y < 9) and (x,y) not in self.game.map.world_map
