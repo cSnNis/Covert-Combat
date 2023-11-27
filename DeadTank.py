@@ -1,7 +1,6 @@
 from settings import *
 import pygame as pg
 from main import *
-import imageio.v3 as iio
 
 
 
