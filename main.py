@@ -157,6 +157,7 @@ class Game:
       NPC.draw()
     
     self.obs_group.draw(self.screen)
+    self.explosion_group.draw(self.screen)
 
   def check_events(self):
     for event in pg.event.get():

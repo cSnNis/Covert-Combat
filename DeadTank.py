@@ -30,6 +30,10 @@ class Explosion(pg.sprite.Sprite):
         self.rect = self.image.get_rect(center = position)
 
     def update(self):
+        if frame < 18: #If we've reached the last frame, then destroy the object.
+            self.kill()
+            return None
+        
         frame += 1
         self.subsurfaceRect.move_ip(self.subsurfaceWidth)
         self.image = EXPLOSIONSCALED.subsurface(self.subsurfaceRect)
