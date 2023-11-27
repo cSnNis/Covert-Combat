@@ -41,8 +41,7 @@ accelsens = .1 #How low x or y acceleration can go before it rounds to zero. Thi
 player_max_speed = 3
 
     #Collision Settings
-bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
-minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
+minimumBounceSpeed = .09 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. It must be less than accel_sens to prevent runaway collisions into a wall.
 bounceDeceleration = 1 #The rate at which the bounce loses velocity.
 
     #Tank Sprites
