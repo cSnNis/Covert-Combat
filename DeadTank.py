@@ -15,5 +15,20 @@ class DeadTank(pg.sprite.Sprite):
         self.image = pg.transform.rotate(image, math.degrees(rotation))
         self.rect = self.image.get_rect(center = spawnPosition)
 
-    def load_animation(self):
-        frames = []
+class Explosions(pg.sprite.Sprite):
+    def __init__(self, game, position):
+        self.subsurfaceWidth = 180 * RESMULTX
+        self.subsurfaceHeight = 180 * RESMULTY
+
+        self.subsurfaceRect = pg.Rect(0,0, self.subsurfaceWidth, self.subsurfaceHeight)
+        self.frame = 0 #There are 18 total frames
+
+        self.image = EXPLOSIONSCALED.subsurface(self.subsurfaceRect)
+        self.rect = self.image.get_rect(center = position)
+
+    def update(self):
+        frame += 1
+        self.subsurfaceRect.move_ip(self.subsurfaceWidth)
+        self.image = EXPLOSIONSCALED.subsurface(self.subsurfaceRect)
+
+    

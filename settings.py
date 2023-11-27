@@ -52,10 +52,7 @@ tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
 
     #Destroyed Images
-GD_path = 'images/obstacles/G_Destroyed.png'
-RD_path = 'images/obstacles/R_Destroyed.png'
-BD_path = 'images/obstacles/B_Destroyed.png'
-Explosion_path = pg.image.load('images/explosion-gif-frames/Explosion_Sprite_Sheet.png').convert_alpha()
+Explosion_image = pg.image.load('images/explosion-gif-frames/Explosion_Sprite_Sheet.png').convert_alpha()
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
@@ -122,5 +119,9 @@ TANKSPRITELIST = [(GREENTANKIMAGE, GREENTURRETIMAGE, GREENDESTROYED), (BLUETANKI
 
 #Pre-loading sounds
 THUDSOUND = pg.mixer.Sound(turret_rot_sound_path)
+
+
+#Pre-loading explosions
+EXPLOSIONSCALED = pg.transform.scale(Explosion_image, (Explosion_image.get_width() * RESMULTX, Explosion_image.get_height() * RESMULTY))
 
 
