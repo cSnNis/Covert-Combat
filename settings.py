@@ -55,7 +55,7 @@ tankSpriteScalingFactor = 1
 GD_path = 'images/obstacles/G_Destroyed.png'
 RD_path = 'images/obstacles/R_Destroyed.png'
 BD_path = 'images/obstacles/B_Destroyed.png'
-Explosion_path = 'images/tank/explosion-gif-frames/Explosion_Sprite_Sheet.png'
+Explosion_path = pg.image.load('images/explosion-gif-frames/Explosion_Sprite_Sheet.png').convert_alpha()
 
 player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
