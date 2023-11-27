@@ -55,7 +55,8 @@ class NPC(BaseTank):
             case 2: # Deceleration state. This is defaulted to when the NPC collides with something.
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
 
-                if abs(self.speed) < accelsens: #Once fully decelerated, change states.
+                if abs(self.speed) < accelsens and self.deflectionSpeed < accelsens: #Once fully decelerated, change states.
+                    self.speed = 0
                     self.stopped = True
                     self.ShouldRotate = True #Begin having the tank rotate again. This is switched off whenever there is a collision.
                     self.engine_sound.stop()
@@ -77,8 +78,14 @@ class NPC(BaseTank):
         self.engine_sound.set_volume(self.speed/5)
 
         #Random turret movement.
+        if abs(self.turret_angle - self.turret_direction) > 1:
+                if self.RotatePositive: #Randomly set inside changeDirection. "Positive" means counterclockwise.
+                    self.turret_angle += player_rot_speed * self.game.delta_time
+                else:
+                    self.turret_angle -= player_rot_speed * self.game.delta_time
 
     def changeDirection(self): #Generates a viable destination for the NPC.
+        print('Changing direction')
         x, y = self.map_pos
         indexX, indexY = self.map_pos[0] - 1, self.map_pos[1] - 1 #Refer to map.py for why there is an index coordinate and actual coordinate.
         mini_map = self.game.map.mini_map
@@ -124,6 +131,7 @@ class NPC(BaseTank):
                 possibleDestinations.append(0)
 
             self.direction = random.choice(possibleDestinations) + random.uniform((-math.pi/8), (math.pi/8)) % math.tau
+            self.turret_direction = random.uniform(0, math.tau)
             self.RotatePositive = random.choice((True, False)) 
         except(IndexError):
             print('My game-breaking position was ',x, y)
@@ -133,9 +141,11 @@ class NPC(BaseTank):
 
     # Override of the BaseTank method. So far it does nothing, but any NPC specific logic can be written here.
     def update(self):
+        super().update()
+
         if self.movementState != decelerationState: #If it is moving;
 
-            if self.isColliding[0] and self.isColliding[1] is not NPC: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
+            if self.isColliding[0] and type(self.isColliding[1]) != NPC: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
                 self.ShouldRotate = False
                 #pg.draw.rect(self.game.screen, 'green', self.rect)
                 self.movementState = decelerationState
@@ -150,6 +160,4 @@ class NPC(BaseTank):
         #pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.direction) * COORDINATEMULTX, self.yDisplay + math.sin(-self.direction) * COORDINATEMULTY), 2)
 
         self.get_movement()
-        
-        super().update()
         

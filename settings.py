@@ -2,7 +2,7 @@ import pygame as pg
 
 
 #Display settings
-res = WIDTH,HEIGHT = 800,450
+res = WIDTH,HEIGHT = 1920,1080
 fps = 60 
 
 #Start Menu settings
@@ -42,12 +42,10 @@ player_max_speed = 3
 
     #Collision Settings
 bounceSpeedFactor = 1.1 #How much more energy the tank bounces off the wall with.
-minimumBounceSpeed = 1 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
+minimumBounceSpeed = .25 #The minimum velocity of bounce from a collision. This is for when tanks rotate into a collision, rather than drive into a collision. 
 bounceDeceleration = 1 #The rate at which the bounce loses velocity.
 
     #Tank Sprites
-tank_sprite_path = 'images/tank/GreenTankBody.png'
-turret_sprite_path = 'images/tank/Turret.png'
 tank_scale = .5 #Scaling the dimensions for the tanks.
 tankSpriteScalingFactor = 1
 
@@ -61,7 +59,7 @@ player_rot_speed = 1 #Radians per second
 turret_rot_speed = 2
 
     #Shooting Settings
-ShellCooldownTime = .5
+ShellCooldownTime = 1
 shell_sprite_path = 'images/tank/Shell.png'
 shell_sprite_dimensions = (50,50)
 
