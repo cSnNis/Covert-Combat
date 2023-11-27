@@ -53,9 +53,9 @@ class NPC(BaseTank):
                 self.ShouldRotate = True
                 self.stopped = False
                 self.speed += player_accel * self.game.delta_time
-                #self.engine_sound.set_volume(self.speed/5)
-                #if self.engine_sound.get_num_channels() == 0:
-                    #self.engine_sound.play(-1)
+                self.engine_sound.set_volume(self.speed/5)
+                if self.engine_sound.get_num_channels() == 0:
+                    self.engine_sound.play(-1)
             case 2: # Deceleration state. This is defaulted to when the NPC collides with something.
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
 
