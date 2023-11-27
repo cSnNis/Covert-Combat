@@ -55,7 +55,7 @@ class NPC(BaseTank):
             case 2: # Deceleration state. This is defaulted to when the NPC collides with something.
                 self.speed *= 1 - (player_deceleration * self.game.delta_time)
 
-                if abs(self.speed) < accelsens and self.deflectionSpeed < accelsens: #Once fully decelerated, change states.
+                if abs(self.speed) < accelsens or self.deflectionSpeed < accelsens: #Once fully decelerated, change states.
                     self.speed = 0
                     self.stopped = True
                     self.ShouldRotate = True #Begin having the tank rotate again. This is switched off whenever there is a collision.
@@ -81,7 +81,6 @@ class NPC(BaseTank):
                     self.turret_angle -= player_rot_speed * self.game.delta_time
 
     def changeDirection(self): #Generates a viable destination for the NPC.
-        print('Changing direction')
         x, y = self.map_pos
         indexX, indexY = self.map_pos[0] - 1, self.map_pos[1] - 1 #Refer to map.py for why there is an index coordinate and actual coordinate.
         mini_map = self.game.map.mini_map
@@ -99,31 +98,23 @@ class NPC(BaseTank):
                 #Which direction is represented by a number, corresponding to an imaginary tic-tac-toe board number 1-9 surrounding the NPC, which starts at the top left corner. 6 represents the NPC.
 
                 if not AtLeftEdge and self.game.map.mini_map[indexY - 1][indexX - 1] == False: #Top left; 1
-                    #possibleDestinations.append((x - 1, y - 1))
                     possibleDestinations.append(.75 * math.pi)
                 if self.game.map.mini_map[indexY - 1][indexX] == False: #Above; 2
-                    #possibleDestinations.append((x, y - 1))
                     possibleDestinations.append(math.pi / 2)
                 if not AtRightEdge and self.game.map.mini_map[indexY - 1][indexX + 1] == False: #Top right; 3
-                    #possibleDestinations.append((x + 1, y - 1))
                     possibleDestinations.append(math.pi / 4)
             if (indexY < mapHeight): #Checking the cells adjacent and to the bottom
                 if not AtLeftEdge and self.game.map.mini_map[indexY + 1][indexX - 1] == False: #Bottom left; 7
-                    #possibleDestinations.append((x - 1, y + 1))
                     possibleDestinations.append(1.25 * math.pi)
                 if self.game.map.mini_map[indexY + 1][indexX] == False: #Below; 8
-                    #possibleDestinations.append((x, y + 1))
                     possibleDestinations.append(1.5 * math.pi)
                 if not AtRightEdge and self.game.map.mini_map[indexY + 1][indexX + 1] == False: #Bottom right; 9
-                    #possibleDestinations.append((x + 1, y + 1))
                     possibleDestinations.append(1.75 * math.pi)
         
                 #Checking cells to the left and right
             if not AtLeftEdge and self.game.map.mini_map[indexY][indexX - 1] == False: #Left
-                #possibleDestinations.append((x - 1, y))
                 possibleDestinations.append(math.pi)
             if not AtRightEdge and self.game.map.mini_map[indexY][indexX + 1] == False: #Bottom right
-                #possibleDestinations.append((x + 1, y))
                 possibleDestinations.append(0)
 
             self.direction = random.choice(possibleDestinations) + random.uniform((-math.pi/8), (math.pi/8)) % math.tau
@@ -143,7 +134,6 @@ class NPC(BaseTank):
 
             if self.isColliding[0]: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
                 self.ShouldRotate = False
-                #pg.draw.rect(self.game.screen, 'green', self.rect)
                 self.movementState = decelerationState
                 self.direction = self.deflectionAngle
             
@@ -152,8 +142,6 @@ class NPC(BaseTank):
                     self.changeDirection()
                 elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 20 chance for it to change movement state.
                     self.changeMovementState()
-
-        #pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(self.direction) * COORDINATEMULTX, self.yDisplay + math.sin(-self.direction) * COORDINATEMULTY), 2)
 
         self.get_movement()
         
