@@ -38,11 +38,12 @@ class BaseTank(pg.sprite.Sprite):
         self.stopped = True
 
         #Loading in sounds
-        self.turret_rot_sound = THUDSOUND
+        self.turret_rot_sound = TROTATESOUND
         self.turret_rot_sound.set_volume(turret_rot_volume)
-        self.fence_collision_sound = pg.mixer.Sound(fence_collision_path)
-        self.fence_collision_sound.set_volume(fence_collision_volume)
-        self.engine_sound = pg.mixer.Sound(engine_sound_path)
+        fence_collision_sound = FENCECOLLISION
+        fence_collision_sound.set_volume(fence_collision_volume)
+        self.tank_explosion_sound = TANKEXPLOSION
+        self.tank_explosion_sound.set_volume(tank_death_volume)
 
     def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time
@@ -148,7 +149,7 @@ class BaseTank(pg.sprite.Sprite):
                     pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
                     pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
 
-                    
+                    #self.wall_thud_sound.play()
 
                     return True, collision
         return False, None #If there are no objects colliding, then return False also.
@@ -160,6 +161,7 @@ class BaseTank(pg.sprite.Sprite):
     def destroy(self):
         DeadTank(self.game, self.rect.center, self.angle, self.destroyed_image)
         print(str(self), 'has died.') #I'm leaving this here just in case, but in order for this to work properly, both the NPC and Player class need a __str__ method
+        self.tank_explosion_sound.play()
         self.kill()
 
     # Method to update the tank's state

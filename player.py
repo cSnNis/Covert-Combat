@@ -21,8 +21,9 @@ class Player(BaseTank):
         
         self.turretMovement = True
 
-        self.shoot_sound = pg.mixer.Sound(tank_shoot_path)
+        self.shoot_sound = SHOOTSOUND
         self.shoot_sound.set_volume(tank_shoot_volume)
+        self.engine_sound = ENGINESOUND
 
     def get_movement(self): #Get movement from the player.
         keys = pg.key.get_pressed() #dictionary of keys pressed this frame
@@ -123,8 +124,8 @@ class Shell(pg.sprite.Sprite):
         self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group, self.game.obs_group]
         self.speed = 500 #If you adjust the speed, keep it within the hundreds range
 
-        self.death_sound = pg.mixer.Sound(tank_explosion_path)
-        self.death_sound.set_volume(tank_explosion_volume)
+        self.shell_collision_sound = SHELLSOUND
+        self.shell_collision_sound.set_volume(shell_collision_volume)
 
     def update(self):
         x_change = self.speed * math.cos(self.angle) * self.game.delta_time #uses the same angle calculations as the player's turret
@@ -161,7 +162,7 @@ class Shell(pg.sprite.Sprite):
 
                 pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
-                self.death_sound.play()
+                self.shell_collision_sound.play()
 
                 return True, collision, (x,y)
             
