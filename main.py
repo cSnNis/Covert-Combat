@@ -134,6 +134,8 @@ class Game:
     for NPC in self.NPC_group:
       NPC.update()
     
+    for explosion in self.explosion_group:
+      explosion.update
     pg.display.flip()
     self.delta_time = self.clock.tick(fps) / 1000
     pg.display.set_caption(f'COVERT COMBAT {self.clock.get_fps() :.1f}')
