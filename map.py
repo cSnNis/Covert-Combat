@@ -20,7 +20,6 @@ class Wall(pg.sprite.Sprite):
         super().__init__()
         self.image = pg.image.load(image_path).convert_alpha(); self.image = pg.transform.scale(self.image, (dimensions[0] * RESMULTX, dimensions[1] * RESMULTY))
         self.rect = self.image.get_rect()
-        self.rect.center = (x,y)
         self.rect.topleft = (x * COORDINATEMULTX, y * COORDINATEMULTY)
         self.mask = pg.mask.from_surface(self.image)
 
