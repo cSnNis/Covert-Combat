@@ -61,7 +61,6 @@ class NPC(BaseTank):
 
                 if abs(self.speed) < accelsens or self.deflectionSpeed < accelsens: #Once fully decelerated, change states.
                     self.speed = 0
-                    self.stopped = True
                     self.ShouldRotate = True #Begin having the tank rotate again. This is switched off whenever there is a collision.
                     self.engine_sound.stop()
                     self.changeDirection()
