@@ -84,6 +84,9 @@ fence_collision_volume = .3
 #Tile Settings
 tile_sprite_path = 'images/obstacles/wall image.jpg'
 
+#object image paths
+
+
 
 
 # DO NOT CHANGE VALUES BELOW THIS LINE unless you're sure. They are calculated based off of earlier set values.
