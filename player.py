@@ -124,7 +124,7 @@ class Shell(pg.sprite.Sprite):
         self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center = (x,y)) #make a shell that's center lies where the player is
         self.collidables = [self.game.map.walls, self.game.player_group, self.game.NPC_group, self.game.obs_group]
-        self.speed = 500 #If you adjust the speed, keep it within the hundreds range
+        self.speed = 1000 #If you adjust the speed, keep it within the hundreds range
 
         self.shell_collision_sound = SHELLSOUND
         self.shell_collision_sound.set_volume(shell_collision_volume)
