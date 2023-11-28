@@ -1,189 +1,151 @@
 from settings import *
 import pygame as pg
 import math
+from main import *
+from BaseTank import BaseTank
+import random
 
-# Define the Player class for the player character
-class NPC(pg.sprite.Sprite):
-    def __init__(self, game, startPosition, startAngle):
-        # Initialize the tank's attributes
-        pg.sprite.Sprite.__init__(self)
-        self.game = game
-        self.x, self.y = startPosition  # Initial tank position
-        self.angle =  startAngle # Initial tank angle
-        self.add(self.game.NPC_group)
+forwardState = 1
+decelerationState = 2
+backwardState = 3
+possibleStates = [forwardState, forwardState, decelerationState, backwardState]
 
-        self.xDisplay, self.yDisplay = (self.pos[0] * COORDINATEMULT[0], self.pos[1] * COORDINATEMULT[1])
-        self.image = pg.image.load(tank_sprite_path).convert_alpha(); self.image = pg.transform.scale(self.image, (self.image.get_width() * RESMULTX * tankSpriteScalingFactor, self.image.get_height() * RESMULTY * tankSpriteScalingFactor))  # Load player image, scale it by the set scaling factor and the set resolution.
-        self.rect = self.image.get_rect()  # Create a rect for the player sprite
-        self.rect.center = (self.x * COORDINATEMULTX, self.y * COORDINATEMULTY)  # Set the initial position
-        self.speed = 0
-        
-        self.turret_angle = 0  # Initial turret angle
-        self.turret_image = pg.transform.scale_by(pg.image.load(turret_sprite_path).convert_alpha(), tank_scale)  # Load turret image
-        
-        #Collision Variables
-        self.collidables = [self.game.map.walls] #Anything that should be collided with should be in this group.
-        self.mask = pg.mask.from_surface(self.image) # We are only doing collisions for the body of the tank.
-        self.isColliding = (False, 0)
-        self.deflectionSpeed = 0
+# Define the NPC class for the for nonplable tanks
+class NPC(BaseTank):
+    def __init__(self, game, startPosition):
 
-        self.inputs = p1Inputs
-    
-        self.stopped = True
+        #Initialialize tank properties.
+        super().__init__(game, game.NPC_group, startPosition)
 
-    def get_movement(self): #Generate movement.
-        self.turret_angle %= math.tau
-        #Remember to set self.stopped to False if it moves.
-        pass
+        #Pathfinding variables
+        self.direction = 0 #The direction the NPC is currently aiming to go. It is picked by self.generateDirection
+        self.turret_direction = 0 #The direction the turret is tending towards.
 
-    def apply_movement(self): #Apply the current velocity (self.angle as direction, self.speed as magnitude)
-        x_change = self.speed * math.cos(self.angle) * self.game.delta_time
-        y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
+        self.ShouldRotate = True
+        self.RotatePositive = False #Randomly set by generateDirection()
+        self.movementState = decelerationState
+        self.changeDirection()
 
-        #Check for collisions. If there exist collisions, (evident by deflectionSpeed being positive) then apply the calculated deflection velocity.
-        self.checkCollision()
-        if self.deflectionSpeed > 0:
-            x_change += self.deflectionSpeed * math.cos(self.deflectionAngle) * self.game.delta_time
-            y_change += self.deflectionSpeed * math.sin(-self.deflectionAngle) * self.game.delta_time
+        self.engine_sound = pg.mixer.Sound(engine_sound_path)
+        self.wall_thud_sound = WALLTHUD
+        self.wall_thud_sound.set_volume(wall_thud_volume)
 
-            #Decelerating the deflection speed, so the bounce "dies out" due to friction.
-            self.deflectionSpeed *= 1 - (bounceDeceleration * self.game.delta_time)
-            if abs(self.deflectionSpeed) < accelsens: #If the deflection speed is low enough, stop calculating for deflection velocity.
-                self.deflectionSpeed = 0
+        self.add(game.NPC_group)
 
-        #Throttle if max speed is reached.
-        if self.speed > player_max_speed: 
-            self.speed = player_max_speed
-        if self.speed < -player_max_speed:
-            self.speed = -player_max_speed
-
-        #Check for collisions before applying movement.
-        if self.check_wall(int(self.x + x_change),int(self.y)): #If not colliding with a wall on the x axis,
-            self.x += x_change #Then apply for that axis
-        if self.check_wall(int(self.x),int(self.y+y_change)):
-            self.y += y_change
-
-
-        #Pixel-based collisions for the obstacles
-    def checkCollision(self): #Detects for pixel-based collisions between the tank sprite and anything in self.collidables, then returns the deflection angle.
-        for group in self.collidables: 
-            collisions = pg.sprite.spritecollide(self, group, False)
-            if len(collisions) > 0: #If there exists a collision, 
-                collision = collisions[0] #Only calculate the first, so far.
-                
-                maskCollisionPoint = pg.sprite.collide_mask(self, collision) #The x and y coordinate of the collision, in the local space of the mask's rectangle (top corner of the rectangle is 0,0)
-                if maskCollisionPoint == None:
-                    return False, None #If collide_mask returns None, then there is no collision to calculate.
-
-                self.game.screen.set_at(maskCollisionPoint, 'blue')
-                self.game.screen.blit(self.mask.to_surface(), self.mask.get_rect())
-
-                #Find that intersecting point in world game space.
-                x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
-                y = self.rect.top + maskCollisionPoint[1]
-                pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
-
-                #Getting the angle of the collision point to the center of the tank.
-                
-                collision_point_angle = math.atan((self.yDisplay - y) / (self.xDisplay - x))
-                pg.draw.line(self.game.screen, 'green', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
-
-                #Correct the angle for each quadrant, because arctan is restricted and is also stupid.
-                if (self.yDisplay > y) and (self.xDisplay < x): #Q1
-                    collision_point_angle = -collision_point_angle
-                if (self.yDisplay > y) and (self.xDisplay > x): #Q2
-                    collision_point_angle = math.pi - collision_point_angle
-                if (self.yDisplay < y) and (self.xDisplay > x): #Q3
-                    collision_point_angle = math.pi + abs(collision_point_angle)
-                if (self.yDisplay < y) and (self.xDisplay < x): #Q4  
-                    collision_point_angle = -(collision_point_angle) #If not in Q3, then it's in Q2
-                collision_point_angle %= 2 * math.pi
-                
-                #Get the inverse of the bisecting angle between the tank's angle and the collision angle.
-                if self.angle > collision_point_angle:
-                    greater = self.angle; lesser = collision_point_angle
+    def get_movement(self): #Generate movement for the NPC, given it's angle, intended direction, and current state.
+        #Rotating the tank towards self.direction.
+        if self.ShouldRotate:
+            if abs(self.angle - self.direction) > 1:
+                if self.RotatePositive: #Randomly set inside changeDirection. "Positive" means counterclockwise.
+                    if self.angle > self.direction:
+                        self.angle += player_rot_speed * self.game.delta_time
+                    else:
+                        self.angle -= player_rot_speed * self.game.delta_time
                 else:
-                    greater = collision_point_angle; lesser = self.angle
-                deflect_angle = lesser + ((greater - lesser) / 2)
-                if (greater - lesser) < math.pi:
-                    deflect_angle += math.pi
-                
-                #Setting the deflection variables to be used by self.apply_movement.
-                if abs(self.speed) > minimumBounceSpeed: #Deflections should always have a velocity, otherwise Tanks will not bounce when they rotate into surfaces.
-                    self.deflectionSpeed = (abs(self.speed) * bounceSpeedFactor)
+                    if self.angle > self.direction:
+                        self.angle -= player_rot_speed * self.game.delta_time
+                    else:
+                        self.angle += player_rot_speed * self.game.delta_time
+
+        #Apply acceleration, depending on the current state.
+        match self.movementState:
+            case 1:# forward state
+                self.ShouldRotate = True
+                self.stopped = False
+                self.speed += player_accel * self.game.delta_time
+                self.engine_sound.set_volume(self.speed/5)
+                if self.engine_sound.get_num_channels() == 0:
+                    pg.mixer.Channel(4).play(self.engine_sound)
+            case 2: # Deceleration state. This is defaulted to when the NPC collides with something.
+                self.speed *= 1 - (player_deceleration * self.game.delta_time)
+
+                if abs(self.speed) < accelsens or self.deflectionSpeed < accelsens: #Once fully decelerated, change states.
+                    self.speed = 0
+                    self.stopped = True
+                    self.ShouldRotate = True #Begin having the tank rotate again. This is switched off whenever there is a collision.
+                    self.engine_sound.stop()
+                    self.changeDirection()
+                    self.changeMovementState()
+                    self.engine_sound.stop()
+            case 3: #backward state
+                self.ShouldRotate = True
+                self.stopped = False
+                self.speed -= player_accel * self.game.delta_time
+                self.engine_sound.set_volume(self.speed/5)
+                if self.engine_sound.get_num_channels() == 0:
+                    pg.mixer.Channel(4).play(self.engine_sound)
+        
+        self.engine_sound.set_volume(self.speed/5)
+
+        #Random turret movement.
+        if abs(self.turret_angle - self.turret_direction) > 1:
+                if self.RotatePositive: #Randomly set inside changeDirection. "Positive" means counterclockwise.
+                    self.turret_angle += player_rot_speed * self.game.delta_time
                 else:
-                    self.deflectionSpeed = minimumBounceSpeed
-                self.deflectionAngle = deflect_angle
-                
-                pg.draw.rect(self.game.screen, 'blue', pg.Rect(maskCollisionPoint[0], maskCollisionPoint[1], 2,2))
-                
-                #Red is the tank's forward velocity, blue is the angle of collision, green is the unprocessed angle of collision, and purple is the calculated angle of deflection.
-                pg.draw.line(self.game.screen, 'blue', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(collision_point_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-collision_point_angle) * COORDINATEMULTY), 2)
-                pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
-                pg.draw.line(self.game.screen, 'purple', (self.xDisplay, self.yDisplay), (self.xDisplay + math.cos(deflect_angle) * COORDINATEMULTX, self.yDisplay + math.sin(-deflect_angle) * COORDINATEMULTY), 2) #deflection angle
+                    self.turret_angle -= player_rot_speed * self.game.delta_time
 
-                return True, collision
-            return False, None #If there are no objects colliding, then return False also.
+    def changeDirection(self): #Generates a viable destination for the NPC.
+        x, y = self.map_pos
+        indexX, indexY = self.map_pos[0] - 1, self.map_pos[1] - 1 #Refer to map.py for why there is an index coordinate and actual coordinate.
+        mini_map = self.game.map.mini_map
+        mapWidth = len(mini_map[0]) - 1
+        mapHeight = len(mini_map) - 1
+        AtLeftEdge = (indexX == 0)
+        AtRightEdge = (indexX == mapWidth)
 
-    def check_wall(self,x,y): #Check for wall collision by comparing that point with the world_map.
-        return(x,y) not in self.game.map.world_map
+        possibleDestinations = []
 
-    # Method to update the player's state
-    def update(self):
-        self.get_movement() #Get player inputs
+        #Check which of the adjacent cells are empty.
+        try:
+            if (indexY > 0): #Checking the cells adjacent and to the top.
 
-        if not self.stopped: 
-            self.apply_movement() #Apply the movement
+                #Which direction is represented by a number, corresponding to an imaginary tic-tac-toe board number 1-9 surrounding the NPC, which starts at the top left corner. 6 represents the NPC.
 
-        self.rect.center = (self.x * 200, self.y * 50)  # Update sprite's position
-
-    # Method to draw the player and turret
-    def draw(self):
-        self.xDisplay = self.x * COORDINATEMULTX
-        self.yDisplay = self.y * COORDINATEMULTY
+                if not AtLeftEdge and self.game.map.mini_map[indexY - 1][indexX - 1] == False: #Top left; 1
+                    possibleDestinations.append(.75 * math.pi)
+                if self.game.map.mini_map[indexY - 1][indexX] == False: #Above; 2
+                    possibleDestinations.append(math.pi / 2)
+                if not AtRightEdge and self.game.map.mini_map[indexY - 1][indexX + 1] == False: #Top right; 3
+                    possibleDestinations.append(math.pi / 4)
+            if (indexY < mapHeight): #Checking the cells adjacent and to the bottom
+                if not AtLeftEdge and self.game.map.mini_map[indexY + 1][indexX - 1] == False: #Bottom left; 7
+                    possibleDestinations.append(1.25 * math.pi)
+                if self.game.map.mini_map[indexY + 1][indexX] == False: #Below; 8
+                    possibleDestinations.append(1.5 * math.pi)
+                if not AtRightEdge and self.game.map.mini_map[indexY + 1][indexX + 1] == False: #Bottom right; 9
+                    possibleDestinations.append(1.75 * math.pi)
         
-        #Tank body
-        rotated_image = pg.transform.rotate(self.image, math.degrees(self.angle))
-        self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
-        rotated_image = pg.transform.rotate(self.image, math.degrees(self.angle))
-        self.rect = rotated_image.get_rect(center=(self.xDisplay, self.yDisplay))
-        self.mask = pg.mask.from_surface(rotated_image)
-        self.game.screen.blit(rotated_image, self.rect)
-        
-        #Turret
-        rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
-        turret_rect = rotated_turret.get_rect(center=(self.xDisplay, self.yDisplay))
-        rotated_turret = pg.transform.rotate(self.turret_image, math.degrees(self.turret_angle))
-        turret_rect = rotated_turret.get_rect(center=(self.xDisplay, self.yDisplay))
-        self.game.screen.blit(rotated_turret, turret_rect)
+                #Checking cells to the left and right
+            if not AtLeftEdge and self.game.map.mini_map[indexY][indexX - 1] == False: #Left
+                possibleDestinations.append(math.pi)
+            if not AtRightEdge and self.game.map.mini_map[indexY][indexX + 1] == False: #Bottom right
+                possibleDestinations.append(0)
 
-        pg.draw.line(self.game.screen, 'red', (self.xDisplay, self.yDisplay), (self.xDisplay + (math.cos(self.angle) * COORDINATEMULTX), self.yDisplay + (math.sin(-self.angle) * COORDINATEMULTY)), 2) #Forward velocity
+            self.direction = random.choice(possibleDestinations) + random.uniform((-math.pi/8), (math.pi/8)) % math.tau
+            self.turret_direction = random.uniform(0, math.tau)
+            self.RotatePositive = random.choice((True, False)) 
+        except(IndexError):
+            print('My game-breaking position was ',x, y)
 
-    # Property to get the player's position
-    @property
-    def pos(self):
-        return self.x, self.y
+    def changeMovementState(self):
+        self.movementState = random.choice(possibleStates)
 
-    # Property to get the player's position as integers
-    @property
-    def map_pos(self):
-        return int(self.x), int(self.y)
-    @property
-    def display_pos(self):
-        return self.xDisplay, self.yDisplay
-
-
-#Bullet/Shell Class
-class Shell(pg.sprite.Sprite):
-    def __init__(self, px, py):
-        super().__init__()
-        self.image = pg.Surface((10, 20)) #create an image object (essentially a surface)
-        self.image.fill(225,255,0) #Yellow
-        self.rect = self.image.get_rect(center = (px, py)) #make a shell that's center lies where the player is
+    # Override of the BaseTank method. So far it does nothing, but any NPC specific logic can be written here.
     def update(self):
-        self.rect.move_ip(0, -5) #Make changes here, this is just a stand-in movement
-    def detect_wall(self, collision):
-        for shell in collision.keys():
-            shell_group.remove(shell) #Right now the shell group is in Game.new_game() if you're looking for it
+        super().update()
 
-shell_group = pg.sprite.Group()
+        if self.movementState != decelerationState: #If it is moving;
+
+            if self.isColliding[0]: #If the NPC has collided with something other than an NPC this frame, then begin decelerating and set a new course
+                self.ShouldRotate = False
+                self.movementState = decelerationState
+                self.direction = self.deflectionAngle
+            
+            else: #If there have been no collisions this frame, 
+                if random.random() < .01: #Then there is a 1 in 100 chance per frame to change direction
+                    self.changeDirection()
+                elif random.random() < .05: #If it hasn't collided or changed direciton, then there is a 1 in 20 chance for it to change movement state.
+                    self.changeMovementState()
+
+        self.get_movement()
+        
