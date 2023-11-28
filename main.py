@@ -68,14 +68,18 @@ class Game:
     self.bg_music.play()
 
     #Determine who won.
-    if self.player_group.sprites()[0].inputs == p1Inputs: #If it's player 1;
-      winner = 'Player 1'
-      loser = 'Player 2'
-    else:
-      winner = 'Player 2'
-      loser = 'Player 1'
+    try:
+      if self.player_group.sprites()[0].inputs == p1Inputs: #If it's player 1;
+        winner = 'Player 1'
+        loser = 'Player 2'
+      else:
+        winner = 'Player 2'
+        loser = 'Player 1'
+      victory_text = pg.font.Font(start_font_path,45).render((winner + " found and destroyed " + loser + ". Press Space to Play Again."), None, 'white', 'black'); victory_text = pg.transform.scale(victory_text, (victory_text.get_width() * RESMULTX, victory_text.get_height() * RESMULTY))
+    except:
+      victory_text = pg.font.Font(start_font_path,45).render(("Both Players Died. It's a Tie! Press Space to Play Again."), None, 'white', 'black'); victory_text = pg.transform.scale(victory_text, (victory_text.get_width() * RESMULTX, victory_text.get_height() * RESMULTY))
+
     #Generate the appropriate victory text.
-    victory_text = pg.font.Font(start_font_path,45).render((winner + " found and destroyed " + loser + ". Press Space to Play Again."), None, 'white', 'black'); victory_text = pg.transform.scale(victory_text, (victory_text.get_width() * RESMULTX, victory_text.get_height() * RESMULTY))
     victory_text_rect = victory_text.get_rect(center = (res[0] / 2, res[1] / 2))
 
     #Display this text while waiting for a player to start a new game.
