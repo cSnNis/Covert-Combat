@@ -130,8 +130,8 @@ class Shell(pg.sprite.Sprite):
         self.shell_collision_sound.set_volume(shell_collision_volume)
 
     def update(self):
-        x_change = self.speed * math.cos(self.angle) * self.game.delta_time #uses the same angle calculations as the player's turret
-        y_change = self.speed * math.sin(-self.angle) * self.game.delta_time
+        x_change = self.speed * math.cos(self.angle) * self.game.delta_time * RESMULTX #uses the same angle calculations as the player's turret
+        y_change = self.speed * math.sin(-self.angle) * self.game.delta_time * RESMULTY
         self.rect.centerx += x_change #moves the center every time it updates
         self.rect.centery += y_change
         self.checkCollision() #checks to see if hit something afer moving
