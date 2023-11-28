@@ -162,7 +162,7 @@ class Shell(pg.sprite.Sprite):
                 x = self.rect.left + maskCollisionPoint[0] #Calculating the local space coordinate transposed onto world space. self.rect is the rectangle for the tank sprite.
                 y = self.rect.top + maskCollisionPoint[1]
 
-                pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
+                #pg.draw.rect(self.game.screen, 'blue', pg.Rect(x, y, 5,5)) #Helper function to draw where that collision was.
 
                 pg.mixer.Channel(3).play(self.shell_collision_sound)
 
