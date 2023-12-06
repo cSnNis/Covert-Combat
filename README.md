@@ -41,7 +41,7 @@ Both types of tanks, [`Player`](player.py) and [`NPC`](NPC.py), derive from clas
 `BaseTank` in turn derives from `pygame.sprite.Sprite` which has a lot of handy functions, like `kill()` that is used to remove players and NPCs.
 
 ## `destroy()` and `DeadTank`
-When a `BaseTank` is killed, it creates an instance of `DeadTank` that represents that tank's burning chassis on the screen. `DeadTank` in turn creates an `Explosion` object, which 
+When a `BaseTank` is killed, it creates an instance of `DeadTank` that represents that tank's burning chassis on the screen. `DeadTank` in turn creates an `Explosion` object, which displays an explosion animation on screen and destroys itself after the explosion animation ends. After the `DeadTank` is created, `destroy()` calls the `BaseTank`'s `kill()`.
 
 ## Shooting Mechanics
 Only [`Player`](player.py)s can shoot in game. They do so by creating an object of class `Shell` (derived also from `pygame.sprite.Sprite`) and passing to it the tank's current position and turret angle. Shells fly until they collide with something, in which case they call their own `kill()` method.
@@ -53,4 +53,4 @@ If a collision is detected, then the collision methods for the classes diverge.
 
 For `BaseTank`'s, then a lot of trignometry is then used to find the inverse of the bisecting angle between the velocity of the tank and the collision point, which is then used in `apply_movement()` to calculate the deflection velocity for the tank.
 
-For `Shell`'s, the type of the object collided against is checked to be of type `BaseTank`. If it is, then the collided objects' `destroy`
+For `Shell`'s, the type of the object collided against is checked to be of type `BaseTank`. If it is, then the collided objects' `destroy()` method is called.
