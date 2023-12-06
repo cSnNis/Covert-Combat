@@ -60,3 +60,22 @@ The map is defined in [`map.py`](map.py). `Game.new_game()` creates an instance 
 
 The map is drawn on screen by the `map`'s `draw` being called by `Game.draw()` inside the [Game Loop.](#the-game-loop)
 
+# NPC Movement Generation
+
+NPC's movement logic is generally;
+1. Find a tile adjacent to the NPC that is empty,
+2. Rotate the NPC towards that tile
+3. Drive either forwards or backwards until there is a collision.
+4. If there is a collision, restart the process.
+
+To do this, there are two components to how NPC's generate movement;
+- The Movement State, which is an integer either in `forwardState` equalling 1, `decelerationState` equalling 2, or `backwardState`equalling 3.
+-  The desired directional angle of the tank `direction`, and whether the tank should rotate in that direction presently, the boolean `ShouldRotate`.
+
+What state the NPC is defined in `NPC.update()`. It relies on whether or not a collision has occured in a frame. If there has been a collision, evident by the first value of `isColliding[]` equalling `True`, then the NPC's movement state switches to `decelerationState` until it's deflection velocity is near 0, [and a new direction is picked](#finding-a-viable-direction). If the NPC is not colliding with anything that frame, then there is a 1% chance of the NPC changing direction and a 5% chance of changing to a random movement state.
+
+## Finding a viable direction
+`NPC.changeDirection()` finds empty adjacent spaces by checking `Map.mini_map`. They do some indexing math to find their location in the array using their current screen position, and then check spaces adjacent to theirs in series like a tic-tac-toe board. They pick one at random, and set `direction` to that cell's angle relative to them.
+
+## Moving the NPC to it's set direction
+`NPC` objects generate their movement inside of `get_movement()`, similiar to how `Player` objects get player input inside of their own `get_movement()`. In `get_movement()`, a switch statement performs the logic specific to which movement state the NPC is in. If `ShouldRotate` is set to `True`, then the NPC also rotates towards angle `direction`. The turret will also rotate towards a random angle if `ShouldRotate` is `False`.
