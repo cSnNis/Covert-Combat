@@ -43,6 +43,9 @@ Both types of tanks, [`Player`](player.py) and [`NPC`](NPC.py), derive from clas
 ##`destroy()` and `DeadTank`
 When a `BaseTank` is killed, it creates an instance of `DeadTank` that represents that tank's burning chassis on the screen. `DeadTank` in turn creates an `Explosion` object, which 
 
+##Shooting Mechanics
+Only [`Player`](player.py)s can shoot in game. They do so by creating an object of class `Shell` (derived also from `pygame.sprite.Sprite`) and passing to it the tank's current position and turret angle. Shells fly until they collide with something, in which case they call their own `kill()` method.
+
 #Collisions
 [`Shell`](player.py) objects and [`BaseTank`](BaseTank.py) objects use a similiar collision method. They are both named `checkCollision()`. Collisions work using pygame's `spritecollide()` function, which checks for pixel collisions between two sprite's `mask` attribute. Every frame, an object checks for these collisions against spritegroups in it's attribute list `collidables`. 
 
