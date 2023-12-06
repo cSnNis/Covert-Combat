@@ -54,3 +54,9 @@ If a collision is detected, then the collision methods for the classes diverge.
 For `BaseTank`'s, then a lot of trignometry is then used to find the inverse of the bisecting angle between the velocity of the tank and the collision point, which is then used in `apply_movement()` to calculate the deflection velocity for the tank.
 
 For `Shell`'s, the type of the object collided against is checked to be of type `BaseTank`. If it is, then the collided objects' `destroy()` method is called.
+
+# The Map
+The map is defined in [`map.py`](map.py). `Game.new_game()` creates an instance of class `Map`. In it's constructor, the `Map` object creates a spritegroup for the walls, called `walls`. It also iterates through the list-of-lists `mini_map` and creates class `Wall` instances based on which cells in `mini_map` are filled. 
+
+The map is drawn on screen by the `map`'s `draw` being called by `Game.draw()` inside the [Game Loop.](#the-game-loop)
+
