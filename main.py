@@ -178,7 +178,7 @@ class Game:
     while True: #Keep looping until the game quits.
       self.new_game()
 
-      while len(self.player_group) > 1: #While there exist two players
+      while len(self.player_group) > 1: #Gameplay loop. While there exist two players
         self.check_events()
         self.update()
         self.draw()
